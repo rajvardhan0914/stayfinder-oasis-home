@@ -21,6 +21,10 @@ const SERVER_BASE_URL = 'http://localhost:5000';
 // Connect to MongoDB
 connectDB();
 
+// Debug: Log static file paths
+console.log('Serving static files from:', path.join(__dirname, '../../public'));
+console.log('Serving property images from:', path.join(__dirname, '../../public/properties'));
+
 // Middleware
 app.use(helmet());
 app.use(cors());
