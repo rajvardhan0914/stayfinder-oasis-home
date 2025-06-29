@@ -30,8 +30,7 @@ console.log('Serving property images from:', path.join(publicDir, 'properties'))
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
-app.use(express.static(publicDir));
-app.use('/properties', express.static(path.join(publicDir, 'properties')));
+app.use('/public', express.static(publicDir));
 
 // Routes
 app.use('/api/properties', propertyRoutes);
