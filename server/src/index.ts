@@ -22,15 +22,16 @@ const SERVER_BASE_URL = 'http://localhost:5000';
 connectDB();
 
 // Debug: Log static file paths
-console.log('Serving static files from:', path.join(__dirname, 'public'));
-console.log('Serving property images from:', path.join(__dirname, 'public/properties'));
+const publicDir = path.resolve(__dirname, 'public');
+console.log('Serving static files from:', publicDir);
+console.log('Serving property images from:', path.join(publicDir, 'properties'));
 
 // Middleware
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/properties', express.static(path.join(__dirname, 'public/properties')));
+app.use(express.static(publicDir));
+app.use('/properties', express.static(path.join(publicDir, 'properties')));
 
 // Routes
 app.use('/api/properties', propertyRoutes);
