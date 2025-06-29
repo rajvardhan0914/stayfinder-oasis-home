@@ -22,7 +22,7 @@ const SERVER_BASE_URL = 'http://localhost:5000';
 connectDB();
 
 // Debug: Log static file paths
-const publicDir = path.resolve(__dirname, 'public');
+const publicDir = path.resolve(__dirname, '../public');
 console.log('Serving static files from:', publicDir);
 console.log('Serving property images from:', path.join(publicDir, 'properties'));
 
