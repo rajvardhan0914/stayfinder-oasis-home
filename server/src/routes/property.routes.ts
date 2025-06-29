@@ -5,8 +5,8 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 
-// Ensure the upload directory exists
-const propertyImagesDir = path.join(__dirname, '../../../public/properties');
+// Ensure the upload directory exists (use backend's own public directory)
+const propertyImagesDir = path.join(__dirname, '../public/properties');
 if (!fs.existsSync(propertyImagesDir)) {
   fs.mkdirSync(propertyImagesDir, { recursive: true });
   console.log('Created properties upload directory:', propertyImagesDir);
