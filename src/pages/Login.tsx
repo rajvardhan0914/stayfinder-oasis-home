@@ -1,181 +1,172 @@
-
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Link, useNavigate } from "react-router-dom";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { Home, Eye, EyeOff, Mail, Lock } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/lib/auth";
+import { toast } from "sonner";
+import { Eye, EyeOff, Shield } from "lucide-react";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
+  const [isHostLogin, setIsHostLogin] = useState(false);
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      toast({
-        title: "Welcome back!",
-        description: "You have been successfully signed in.",
-      });
+
+    try {
+      if (isHostLogin) {
+        // Admin login through backend API
+        // console.log('Attempting admin login with:', { email, password: '***' });
+        
+        const response = await fetch('http://localhost:5000/api/admin/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password }),
+        });
+
+        // console.log('Admin login response status:', response.status);
+        // console.log('Admin login response headers:', response.headers);
+
+        if (response.ok) {
+          const data = await response.json();
+          // console.log('Admin login success data:', { ...data, token: '***' });
+          // Store JWT token securely
+          localStorage.setItem("adminToken", data.token);
+          localStorage.setItem("adminEmail", email);
+          toast.success("Host login successful!");
+          navigate("/admin");
+        } else {
+          const errorData = await response.json();
+          // console.log('Admin login error data:', errorData);
+          toast.error(errorData.message || "Invalid host credentials");
+        }
+      } else {
+        // Regular user login
+        await login(email, password);
+        toast.success("Login successful!");
+        navigate("/");
+      }
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || "Login failed. Please check your credentials.");
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const toggleHostLogin = () => {
+    setIsHostLogin(!isHostLogin);
+    setEmail("");
+    setPassword("");
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-blue-50 to-purple-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center space-x-2">
-            <Home className="h-8 w-8 text-teal-500" />
-            <span className="text-2xl font-bold bg-gradient-to-r from-teal-500 to-blue-500 bg-clip-text text-transparent">
-              StayFinder
-            </span>
-          </Link>
-        </div>
-
-        <Card className="shadow-xl border-0 animate-scale-in">
-          <CardHeader className="text-center pb-4">
-            <CardTitle className="text-2xl font-bold text-gray-900">
-              Welcome Back
-            </CardTitle>
-            <p className="text-gray-600">
-              Sign in to your account to continue
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-3 sm:p-4">
+      <div className="absolute top-3 sm:top-4 left-3 sm:left-4">
+        <Link to="/" className="text-xl sm:text-2xl font-bold text-primary">
+          StayFinder
+        </Link>
+      </div>
+      <Card className="w-full max-w-sm">
+        <CardHeader className="pb-3 sm:pb-4">
+          <h1 className="text-xl sm:text-2xl font-bold text-center text-foreground">
+            {isHostLogin ? "Host Access" : "Welcome Back"}
+          </h1>
+          {isHostLogin && (
+            <p className="text-sm text-center text-muted-foreground">
+              Enter host credentials to access admin dashboard
             </p>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 pr-10"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <input
-                    id="remember"
-                    type="checkbox"
-                    className="rounded border-gray-300 text-teal-500 focus:ring-teal-500"
-                  />
-                  <Label htmlFor="remember" className="text-sm">
-                    Remember me
-                  </Label>
-                </div>
-                <Link
-                  to="/forgot-password"
-                  className="text-sm text-teal-500 hover:text-teal-600 story-link"
+          )}
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+            <div>
+              <Label htmlFor="email" className="text-muted-foreground">
+                Email
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                placeholder={isHostLogin ? "Enter host email" : "Enter your email"}
+              />
+            </div>
+            <div>
+              <Label htmlFor="password" className="text-muted-foreground">
+                Password
+              </Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  placeholder={isHostLogin ? "Enter host password" : "Enter your password"}
+                  className="pr-10"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  onClick={togglePasswordVisibility}
                 >
-                  Forgot password?
-                </Link>
-              </div>
-
-              <Button
-                type="submit"
-                disabled={isLoading}
-                className="w-full bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-600 hover:to-blue-600 text-white font-semibold py-3"
-              >
-                {isLoading ? "Signing in..." : "Sign In"}
-              </Button>
-            </form>
-
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <Separator className="w-full" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-2 text-gray-500">Or continue with</span>
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4 text-muted-foreground" />
+                  ) : (
+                    <Eye className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </Button>
               </div>
             </div>
+            <Button
+              type="submit"
+              className="w-full bg-gradient-to-r from-teal-500 to-blue-500 text-white font-semibold shadow hover:from-teal-600 hover:to-blue-600"
+              disabled={isLoading}
+            >
+              {isLoading ? "Logging in..." : (isHostLogin ? "Access Host Dashboard" : "Log in")}
+            </Button>
+          </form>
+          
+          {/* Host Login Toggle */}
+          <div className="mt-4 text-center">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={toggleHostLogin}
+              className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-2 mx-auto"
+            >
+              <Shield className="h-4 w-4" />
+              {isHostLogin ? "Switch to User Login" : "Host Login"}
+            </Button>
+          </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <Button variant="outline" className="w-full">
-                <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24">
-                  <path
-                    fill="currentColor"
-                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                  />
-                  <path
-                    fill="currentColor"
-                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                  />
-                  <path
-                    fill="currentColor"
-                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                  />
-                  <path
-                    fill="currentColor"
-                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                  />
-                </svg>
-                Google
-              </Button>
-              <Button variant="outline" className="w-full">
-                <svg className="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                </svg>
-                Facebook
-              </Button>
-            </div>
-
-            <div className="text-center">
-              <span className="text-gray-600">Don't have an account? </span>
-              <Link
-                to="/register"
-                className="text-teal-500 hover:text-teal-600 font-medium story-link"
-              >
+          {!isHostLogin && (
+            <p className="mt-3 sm:mt-4 text-center text-sm text-muted-foreground">
+              Don't have an account?{" "}
+              <Link to="/register" className="text-primary hover:underline">
                 Sign up
               </Link>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+            </p>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 };

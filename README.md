@@ -1,73 +1,274 @@
-# Welcome to your Lovable project
+# StayFinder - Complete Vacation Rental Platform
 
-## Project info
+A full-stack MERN (MongoDB, Express.js, React, Node.js) application for vacation rental bookings with modern UI, real-time features, and comprehensive user management.
 
-**URL**: https://lovable.dev/projects/28dcbfdc-d408-433f-97c7-c72014cd6d59
+## 🚀 Features
 
-## How can I edit this code?
+### Core Functionality
+- **Property Listings**: Browse, search, and filter vacation rentals
+- **Booking System**: Complete booking flow with date validation and availability checking
+- **User Authentication**: Secure login/register with JWT tokens
+- **User Profiles**: Comprehensive profile management with preferences
+- **Favorites System**: Save and manage favorite properties
+- **Image Upload**: Support for multiple property images and user avatars
+- **Reviews & Ratings**: Property review system
+- **Multi-language Support**: Internationalization (English, Spanish, Hindi)
+- **Currency Conversion**: Multi-currency support (INR, USD, EUR, GBP)
 
-There are several ways of editing your application.
+### Advanced Features
+- **3D Property Visualization**: Interactive 3D property scenes
+- **Real-time Search**: Location-based property search
+- **Responsive Design**: Mobile-first responsive UI
+- **Toast Notifications**: User-friendly feedback system
+- **Form Validation**: Comprehensive client and server-side validation
+- **File Upload**: Secure image upload with multer
+- **Error Handling**: Robust error handling throughout the application
 
-**Use Lovable**
+## 🛠️ Tech Stack
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/28dcbfdc-d408-433f-97c7-c72014cd6d59) and start prompting.
+### Frontend
+- **React 18** with TypeScript
+- **Vite** for fast development and building
+- **Tailwind CSS** for styling
+- **Shadcn/ui** for UI components
+- **React Router** for navigation
+- **Axios** for API calls
+- **React Hook Form** for form management
+- **i18next** for internationalization
+- **Sonner** for toast notifications
+- **Three.js** for 3D visualizations
 
-Changes made via Lovable will be committed automatically to this repo.
+### Backend
+- **Node.js** with Express.js
+- **TypeScript** for type safety
+- **MongoDB** with Mongoose ODM
+- **JWT** for authentication
+- **Multer** for file uploads
+- **bcryptjs** for password hashing
+- **CORS** for cross-origin requests
 
-**Use your preferred IDE**
+## 📦 Installation
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Prerequisites
+- Node.js (v16 or higher)
+- MongoDB (local or cloud instance)
+- npm or yarn package manager
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Setup Instructions
 
-Follow these steps:
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd stayfinder-oasis-home
+   ```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+2. **Install frontend dependencies**
+   ```bash
+   npm install
+   ```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+3. **Install backend dependencies**
+   ```bash
+   cd server
+   npm install
+   ```
 
-# Step 3: Install the necessary dependencies.
-npm i
+4. **Environment Configuration**
+   
+   Create a `.env` file in the `server` directory:
+   ```env
+   MONGODB_URI=mongodb://localhost:27017/stayfinder
+   JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+   PORT=5000
+   NODE_ENV=development
+   ```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+5. **Database Setup**
+   
+   Ensure MongoDB is running locally or update the MONGODB_URI to point to your cloud instance.
+
+6. **Start the application**
+
+   **Terminal 1 - Backend:**
+   ```bash
+   cd server
+   npm run dev
+   ```
+
+   **Terminal 2 - Frontend:**
+   ```bash
+   npm run dev
+   ```
+
+7. **Access the application**
+   - Frontend: http://localhost:5173
+   - Backend API: http://localhost:5000
+
+## 🗄️ Database Schema
+
+### User Model
+```typescript
+{
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  role: 'user' | 'host' | 'admin';
+  avatar?: string;
+  phoneNumber?: string;
+  isVerified: boolean;
+  favorites: ObjectId[];
+  preferences: {
+    language: string;
+    currency: string;
+    notifications: { email: boolean; sms: boolean; marketing: boolean };
+    privacy: { profileVisibility: string; showEmail: boolean; showPhone: boolean };
+  };
+  twoFactorEnabled: boolean;
+  dateOfBirth: Date;
+  address: { street: string; city: string; state: string; country: string; zipCode: string };
+}
 ```
 
-**Edit a file directly in GitHub**
+### Property Model
+```typescript
+{
+  title: string;
+  description: string;
+  price: number;
+  location: { address: string; city: string; state: string; country: string; coordinates: { lat: number; lng: number } };
+  images: string[];
+  amenities: string[];
+  bedrooms: number;
+  bathrooms: number;
+  maxGuests: number;
+  owner: ObjectId;
+  rating: number;
+  reviews: Array<{ user: ObjectId; rating: number; comment: string; date: Date }>;
+  availability: Array<{ startDate: Date; endDate: Date }>;
+  type: 'Apartment' | 'Villa' | 'House' | 'Cabin';
+}
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Booking Model
+```typescript
+{
+  property: ObjectId;
+  user: ObjectId;
+  checkIn: Date;
+  checkOut: Date;
+  guests: number;
+  totalPrice: number;
+  status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
+}
+```
 
-**Use GitHub Codespaces**
+## 🔧 API Endpoints
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Authentication
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
 
-## What technologies are used for this project?
+### Properties
+- `GET /api/properties` - Get all properties
+- `GET /api/properties/:id` - Get single property
+- `POST /api/properties` - Create new property
+- `PUT /api/properties/:id` - Update property
+- `DELETE /api/properties/:id` - Delete property
+- `GET /api/properties/search` - Search properties
+- `POST /api/properties/upload-images` - Upload property images
 
-This project is built with:
+### Users
+- `GET /api/users/profile` - Get user profile
+- `PUT /api/users/profile` - Update user profile
+- `POST /api/users/upload-avatar` - Upload user avatar
+- `GET /api/users/favorites` - Get user favorites
+- `POST /api/users/favorites/:propertyId` - Add to favorites
+- `DELETE /api/users/favorites/:propertyId` - Remove from favorites
+- `GET /api/users/my-properties` - Get user's properties
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Bookings
+- `POST /api/bookings` - Create booking
+- `GET /api/bookings/my-bookings` - Get user's bookings
+- `GET /api/bookings/:id` - Get booking details
 
-## How can I deploy this project?
+## 🎨 UI Components
 
-Simply open [Lovable](https://lovable.dev/projects/28dcbfdc-d408-433f-97c7-c72014cd6d59) and click on Share -> Publish.
+The application uses a comprehensive set of UI components built with Shadcn/ui:
 
-## Can I connect a custom domain to my Lovable project?
+- **Navigation**: Header with user menu and navigation
+- **Cards**: Property cards with image galleries
+- **Forms**: Comprehensive form components with validation
+- **Modals**: Dialog components for confirmations
+- **Toast**: Notification system for user feedback
+- **3D Scenes**: Interactive property visualizations
 
-Yes, you can!
+## 🌐 Internationalization
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+The application supports multiple languages:
+- **English** (default)
+- **Spanish**
+- **Hindi**
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Language switching is available in the user preferences, and all text content is internationalized using i18next.
+
+## 🔒 Security Features
+
+- **JWT Authentication**: Secure token-based authentication
+- **Password Hashing**: bcryptjs for password security
+- **Input Validation**: Comprehensive validation on both client and server
+- **CORS Configuration**: Proper cross-origin request handling
+- **File Upload Security**: Secure image upload with validation
+- **Error Handling**: Secure error responses without sensitive data exposure
+
+## 🚀 Deployment
+
+### Frontend Deployment
+```bash
+npm run build
+```
+
+### Backend Deployment
+```bash
+cd server
+npm run build
+npm start
+```
+
+## 📱 Mobile Responsiveness
+
+The application is fully responsive and optimized for:
+- Desktop (1024px+)
+- Tablet (768px - 1023px)
+- Mobile (320px - 767px)
+
+## 🧪 Testing
+
+To test the database connection:
+```bash
+cd server
+node test-db.js
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+## 🆘 Support
+
+For support and questions:
+- Check the Help Center in the application
+- Review the API documentation
+- Contact the development team
+
+---
+
+**StayFinder** - Your perfect vacation rental platform! 🏠✨

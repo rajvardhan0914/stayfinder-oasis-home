@@ -1,21 +1,35 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <script>
+      (function() {
+        function getInitialColorMode() {
+          const persistedColorPreference = window.localStorage.getItem('theme');
+          const hasPersistedPreference = typeof persistedColorPreference === 'string';
+          if (hasPersistedPreference) {
+            return persistedColorPreference;
+          }
+          const mql = window.matchMedia('(prefers-color-scheme: dark)');
+          const hasMediaQueryPreference = typeof mql.matches === 'boolean';
+          if (hasMediaQueryPreference) {
+            return mql.matches ? 'dark' : 'light';
+          }
+          return 'light';
+        }
+        const colorMode = getInitialColorMode();
+        document.documentElement.classList.add(colorMode);
+      })()
+    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>StayFinder - Find Your Perfect Stay</title>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <!-- Alternative favicon formats (uncomment the one you want to use) -->
+    <!-- <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" /> -->
+    <!-- <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" /> -->
+    <!-- <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" /> -->
+    <title>Stayfinder Oasis</title>
     <meta name="description" content="Discover unique homes and experiences around the world with StayFinder" />
     <meta name="author" content="StayFinder" />
-
-    <meta property="og:title" content="StayFinder - Find Your Perfect Stay" />
-    <meta property="og:description" content="Discover unique homes and experiences around the world with StayFinder" />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
-
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@stayfinder" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
   </head>
 
   <body>
