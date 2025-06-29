@@ -57,4 +57,7 @@ export default defineConfig(({ mode }) => ({
       '@react-three/drei',
     ],
   },
+  preview: {
+    allowedHosts: ['healthcheck.railway.app'],
+  },
 }));
