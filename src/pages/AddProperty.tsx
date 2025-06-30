@@ -48,6 +48,8 @@ export function AddProperty() {
   const [images, setImages] = useState<string[]>([]);
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [newImages, setNewImages] = useState<File[]>([]);
+  const [uploading, setUploading] = useState(false);
   const [propertyData, setPropertyData] = useState<PropertyData>({
     title: "",
     description: "",
@@ -73,11 +75,7 @@ export function AddProperty() {
   const getImageUrl = (imagePath: string) => {
     if (!imagePath) return '';
     if (imagePath.startsWith('http')) return imagePath;
-    if (!imagePath.startsWith('/public/')) {
-      imagePath = imagePath.replace(/^\//, '');
-      imagePath = '/public/' + imagePath;
-    }
-    return `${API_URL}${imagePath}`;
+    return `${API_URL}${imagePath.startsWith('/') ? '' : '/'}${imagePath}`;
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

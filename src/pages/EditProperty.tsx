@@ -55,17 +55,13 @@ const EditProperty = () => {
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [amenitiesInput, setAmenitiesInput] = useState<string>('');
   const [formError, setFormError] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
   const getImageUrl = (imagePath: string) => {
     if (!imagePath) return '';
     if (imagePath.startsWith('http')) return imagePath;
-    // Always ensure /public/ is present
-    if (!imagePath.startsWith('/public/')) {
-      imagePath = imagePath.replace(/^\//, '');
-      imagePath = '/public/' + imagePath;
-    }
-    return `${API_URL}${imagePath}`;
+    return `${API_URL}${imagePath.startsWith('/') ? '' : '/'}${imagePath}`;
   };
 
   useEffect(() => {

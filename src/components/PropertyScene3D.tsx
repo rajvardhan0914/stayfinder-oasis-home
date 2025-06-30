@@ -1,6 +1,7 @@
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Environment } from '@react-three/drei';
+import { OrbitControls, Environment, Plane, useTexture } from '@react-three/drei';
 import { PropertyCard3D } from './PropertyCard3D';
+import { useSpring, a } from '@react-spring/three';
 
 interface PropertyScene3DProps {
   images: string[];
@@ -10,11 +11,12 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 const getImageUrl = (imagePath: string) => {
   if (!imagePath) return '';
   if (imagePath.startsWith('http')) return imagePath;
-  if (!imagePath.startsWith('/public/')) {
-    imagePath = imagePath.replace(/^\//, '');
-    imagePath = '/public/' + imagePath;
-  }
-  return `${API_URL}${imagePath}`;
+  return `${API_URL}${imagePath.startsWith('/') ? '' : '/'}${imagePath}`;
+};
+
+const PropertyImage = ({ image, onSelect, isSelected }: { image: string; onSelect: () => void; isSelected: boolean }) => {
+  const texture = useTexture(image);
+  // ... existing code ...
 };
 
 export function PropertyScene3D({ images }: PropertyScene3DProps) {

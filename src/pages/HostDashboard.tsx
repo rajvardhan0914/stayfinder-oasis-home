@@ -38,6 +38,7 @@ import { useAuth } from "@/lib/auth";
 import { Link, useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useSettings } from '@/lib/SettingsProvider';
+import { useTranslation } from "react-i18next";
 
 interface Booking {
   _id: string;
@@ -92,16 +93,14 @@ const HostDashboard = () => {
   const [allMessages, setAllMessages] = useState<any[]>([]);
   const [isMessagesOpen, setIsMessagesOpen] = useState(false);
   const { convertCurrency } = useSettings();
+  const [properties, setProperties] = useState<any[]>([]);
+  const { t } = useTranslation();
 
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
   const getImageUrl = (imagePath: string) => {
     if (!imagePath) return '';
     if (imagePath.startsWith('http')) return imagePath;
-    if (!imagePath.startsWith('/public/')) {
-      imagePath = imagePath.replace(/^\//, '');
-      imagePath = '/public/' + imagePath;
-    }
-    return `${API_URL}${imagePath}`;
+    return `${API_URL}${imagePath.startsWith('/') ? '' : '/'}${imagePath}`;
   };
 
   // Redirect if not authenticated

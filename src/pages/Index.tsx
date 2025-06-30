@@ -59,11 +59,7 @@ const Index = () => {
   const getImageUrl = (imagePath: string) => {
     if (!imagePath) return '';
     if (imagePath.startsWith('http')) return imagePath;
-    if (!imagePath.startsWith('/public/')) {
-      imagePath = imagePath.replace(/^\//, '');
-      imagePath = '/public/' + imagePath;
-    }
-    return `${API_URL}${imagePath}`;
+    return `${API_URL}${imagePath.startsWith('/') ? '' : '/'}${imagePath}`;
   };
 
   useEffect(() => {

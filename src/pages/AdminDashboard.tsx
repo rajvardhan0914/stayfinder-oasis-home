@@ -103,11 +103,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 const getImageUrl = (imagePath: string) => {
   if (!imagePath) return '';
   if (imagePath.startsWith('http')) return imagePath;
-  if (!imagePath.startsWith('/public/')) {
-    imagePath = imagePath.replace(/^\//, '');
-    imagePath = '/public/' + imagePath;
-  }
-  return `${API_URL}${imagePath}`;
+  return `${API_URL}${imagePath.startsWith('/') ? '' : '/'}${imagePath}`;
 };
 
 export default function AdminDashboard() {

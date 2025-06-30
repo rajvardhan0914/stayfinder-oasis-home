@@ -56,19 +56,29 @@ interface Booking {
   };
 }
 
+interface PopulatedProperty {
+  _id: string;
+  title: string;
+  location: {
+    city: string;
+    state: string;
+  };
+  images: string[];
+}
+
+interface PopulatedBooking extends Booking {
+  property: PopulatedProperty;
+}
+
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 const getImageUrl = (imagePath: string) => {
   if (!imagePath) return '';
   if (imagePath.startsWith('http')) return imagePath;
-  if (!imagePath.startsWith('/public/')) {
-    imagePath = imagePath.replace(/^\//, '');
-    imagePath = '/public/' + imagePath;
-  }
-  return `${API_URL}${imagePath}`;
+  return `${API_URL}${imagePath.startsWith('/') ? '' : '/'}${imagePath}`;
 };
 
 const Bookings = () => {
-  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [bookings, setBookings] = useState<PopulatedBooking[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [isChatOpen, setIsChatOpen] = useState(false);
