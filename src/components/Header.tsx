@@ -31,10 +31,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 const getAvatarUrl = (avatarPath: string) => {
   if (!avatarPath) return '';
   if (avatarPath.startsWith('http')) return avatarPath;
-  if (!avatarPath.startsWith('/public/')) {
-    avatarPath = '/public' + (avatarPath.startsWith('/') ? '' : '/') + avatarPath;
-  }
-  return `${API_URL}${avatarPath}`;
+  return `${API_URL}${avatarPath.startsWith('/') ? '' : '/'}${avatarPath}`;
 };
 
 export const Header = () => {
