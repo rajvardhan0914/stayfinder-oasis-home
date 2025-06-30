@@ -12,6 +12,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuGroup,
 } from "@/components/ui/dropdown-menu";
 import { User, LogOut, Heart, Calendar, UserCircle, HelpCircle, Sun, Moon, Home, Menu, Lock } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -25,6 +26,16 @@ const NavLink = ({ to, children, onClick }: { to: string; children: React.ReactN
     {children}
   </Link>
 );
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const getAvatarUrl = (avatarPath: string) => {
+  if (!avatarPath) return '';
+  if (avatarPath.startsWith('http')) return avatarPath;
+  if (!avatarPath.startsWith('/public/')) {
+    avatarPath = '/public' + (avatarPath.startsWith('/') ? '' : '/') + avatarPath;
+  }
+  return `${API_URL}${avatarPath}`;
+};
 
 export const Header = () => {
   const { user, logout } = useAuth();
@@ -263,34 +274,49 @@ const ThemeToggleButton = () => {
 
 const UserMenu = ({ user, handleLogout }: { user: any; handleLogout: () => void }) => {
   const { t } = useTranslation();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="rounded-full">
-          <Avatar className="h-8 w-8">
-            <AvatarImage src={user.avatar} alt={user.firstName} />
+        <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+          <Avatar className="h-10 w-10">
+            <AvatarImage src={getAvatarUrl(user.avatar)} alt={user.firstName} />
             <AvatarFallback>{user.firstName?.[0]}{user.lastName?.[0]}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel>{user.firstName} {user.lastName}</DropdownMenuLabel>
+      <DropdownMenuContent className="w-56" align="end" forceMount>
+        <DropdownMenuLabel className="font-normal">
+          <div className="flex flex-col space-y-1">
+            <p className="text-sm font-medium leading-none">{user.firstName} {user.lastName}</p>
+            <p className="text-xs leading-none text-muted-foreground">
+              {user.email}
+            </p>
+          </div>
+        </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link to="/personal" className="flex items-center gap-2">
-            <UserCircle className="h-4 w-4" /> {t('profile')}
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link to="/personal/help" className="flex items-center gap-2">
-            <HelpCircle className="h-4 w-4" /> {t('helpAndSupport')}
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link to="/personal/security" className="flex items-center gap-2">
-            <Lock className="h-4 w-4" /> {t('security')}
-          </Link>
-        </DropdownMenuItem>
+        <DropdownMenuGroup>
+          <DropdownMenuItem asChild>
+            <a href="/profile" className="flex items-center gap-2">
+              <User className="h-4 w-4" /> {t('profile')}
+            </a>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <a href="/bookings" className="flex items-center gap-2">
+              <Calendar className="h-4 w-4" /> {t('bookings')}
+            </a>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <a href="/favorites" className="flex items-center gap-2">
+              <Heart className="h-4 w-4" /> {t('favorites')}
+            </a>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <a href="/personal-security" className="flex items-center gap-2">
+              <Lock className="h-4 w-4" /> {t('security')}
+            </a>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout} className="text-destructive flex items-center gap-2">
           <LogOut className="h-4 w-4" /> {t('logout')}

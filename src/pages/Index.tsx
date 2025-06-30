@@ -55,19 +55,15 @@ const Index = () => {
   const [error, setError] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
-  // Helper function to get full image URL
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
   const getImageUrl = (imagePath: string) => {
-    if (!imagePath || imagePath === '') return '/placeholder.svg';
+    if (!imagePath) return '';
     if (imagePath.startsWith('http')) return imagePath;
-    if (imagePath.startsWith('/')) {
-      // If it's already a full path, return it
-      if (imagePath.startsWith('/properties/')) {
-        return `http://localhost:5000${imagePath}`;
-      }
-      return imagePath;
+    if (!imagePath.startsWith('/public/')) {
+      imagePath = imagePath.replace(/^\//, '');
+      imagePath = '/public/' + imagePath;
     }
-    // For relative paths, prepend the backend URL
-    return `http://localhost:5000${imagePath}`;
+    return `${API_URL}${imagePath}`;
   };
 
   useEffect(() => {

@@ -17,6 +17,8 @@ const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -26,7 +28,7 @@ const Login = () => {
         // Admin login through backend API
         // console.log('Attempting admin login with:', { email, password: '***' });
         
-        const response = await fetch('http://localhost:5000/api/admin/login', {
+        const response = await fetch(`${API_URL}/api/admin/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

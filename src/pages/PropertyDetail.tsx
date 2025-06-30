@@ -144,6 +144,18 @@ const PropertyDetail = () => {
 
   const { convertCurrency } = useSettings();
 
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  const getImageUrl = (imagePath: string) => {
+    if (!imagePath) return '';
+    if (imagePath.startsWith('http')) return imagePath;
+    // Always ensure /public/ is present
+    if (!imagePath.startsWith('/public/')) {
+      imagePath = imagePath.replace(/^\//, '');
+      imagePath = '/public/' + imagePath;
+    }
+    return `${API_URL}${imagePath}`;
+  };
+
   useEffect(() => {
     const fetchProperty = async () => {
       try {

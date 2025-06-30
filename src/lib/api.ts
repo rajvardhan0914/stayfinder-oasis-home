@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Use full server URL for development
-const SERVER_BASE_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:5000';
+const SERVER_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 // Debug log to confirm API configuration
 console.log('API Configuration:', {
@@ -60,13 +60,6 @@ api.interceptors.response.use(
         // Fix user avatar
         if (data.avatar && !data.avatar.startsWith('http')) {
           data.avatar = `${SERVER_BASE_URL}${data.avatar}`;
-        }
-        
-        // Fix property images array
-        if (data.images && Array.isArray(data.images)) {
-          data.images = data.images.map((img: string) => 
-            (img && !img.startsWith('http') && !img.startsWith('blob:')) ? `${SERVER_BASE_URL}${img}` : img
-          );
         }
         
         // Recursively check other properties

@@ -21,8 +21,10 @@ const SERVER_BASE_URL = 'http://localhost:5000';
 // Connect to MongoDB
 connectDB();
 
-// Debug: Log static file paths
-const publicDir = path.resolve(__dirname, '../public');
+const isProd = process.env.NODE_ENV === 'production';
+// In production, static files are copied to 'dist'. In dev, they are in 'public'.
+const publicDir = isProd ? path.resolve(__dirname) : path.resolve(__dirname, '..', 'public');
+
 console.log('Serving static files from:', publicDir);
 console.log('Serving property images from:', path.join(publicDir, 'properties'));
 
@@ -30,7 +32,7 @@ console.log('Serving property images from:', path.join(publicDir, 'properties'))
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
-app.use('/public', express.static(publicDir));
+app.use(express.static(publicDir));
 
 // Routes
 app.use('/api/properties', propertyRoutes);

@@ -56,6 +56,18 @@ const EditProperty = () => {
   const [amenitiesInput, setAmenitiesInput] = useState<string>('');
   const [formError, setFormError] = useState<string | null>(null);
 
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  const getImageUrl = (imagePath: string) => {
+    if (!imagePath) return '';
+    if (imagePath.startsWith('http')) return imagePath;
+    // Always ensure /public/ is present
+    if (!imagePath.startsWith('/public/')) {
+      imagePath = imagePath.replace(/^\//, '');
+      imagePath = '/public/' + imagePath;
+    }
+    return `${API_URL}${imagePath}`;
+  };
+
   useEffect(() => {
     const fetchProperty = async () => {
       try {
@@ -63,9 +75,8 @@ const EditProperty = () => {
         const { data } = await api.get<Property>(`/properties/${id}`);
         
         // Ensure image URLs are properly prefixed
-        const serverUrl = 'http://localhost:5000';
         const processedImages = data.images?.map((url: string) => 
-          url.startsWith('http') ? url : `${serverUrl}${url}`
+          getImageUrl(url)
         ) || [];
         
         console.log('=== FETCHED PROPERTY DATA ===');
@@ -161,12 +172,12 @@ const EditProperty = () => {
     // If it's an existing image, we need to remove it from the propertyData.images array
     if(isExisting){
       // Convert the full URL back to relative path for comparison
-      const relativePath = imageUrl.replace('http://localhost:5000', '');
+      const relativePath = imageUrl.replace(API_URL, '');
       setPropertyData(prev => ({
         ...prev, 
         images: prev.images?.filter(img => {
           // Compare both full URL and relative path
-          const imgRelativePath = img.replace('http://localhost:5000', '');
+          const imgRelativePath = img.replace(API_URL, '');
           return img !== imageUrl && imgRelativePath !== relativePath;
         })
       }));
@@ -218,9 +229,8 @@ const EditProperty = () => {
             headers: { 'Content-Type': 'multipart/form-data' },
         });
         // Ensure the image URLs are properly prefixed
-        const serverUrl = 'http://localhost:5000';
         uploadedImageUrls = imageUploadResponse.data.imageUrls.map((url: string) => 
-          url.startsWith('http') ? url : `${serverUrl}${url}`
+          getImageUrl(url)
         );
       }
       
@@ -406,7 +416,7 @@ const EditProperty = () => {
                 const isExisting = index < (propertyData.images?.length || 0);
                 return (
                   <div key={preview} className="relative">
-                    <img src={preview} alt={`Preview ${index + 1}`} className="w-full h-32 object-cover rounded-md" />
+                    <img src={getImageUrl(preview)} alt={`Preview ${index + 1}`} className="w-full h-32 object-cover rounded-md" />
                     <Button type="button" variant="destructive" size="icon" className="absolute top-1 right-1 h-6 w-6" onClick={() => removeImage(index, isExisting)}>
                       <X className="h-4 w-4" />
                     </Button>

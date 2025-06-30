@@ -69,6 +69,17 @@ export function AddProperty() {
     availability: [{ startDate: "", endDate: "" }],
   });
 
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  const getImageUrl = (imagePath: string) => {
+    if (!imagePath) return '';
+    if (imagePath.startsWith('http')) return imagePath;
+    if (!imagePath.startsWith('/public/')) {
+      imagePath = imagePath.replace(/^\//, '');
+      imagePath = '/public/' + imagePath;
+    }
+    return `${API_URL}${imagePath}`;
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setPropertyData(prev => ({
@@ -450,21 +461,6 @@ export function AddProperty() {
                   <h2 className="text-lg font-semibold">Images</h2>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {imageUrls.map((image, index) => {
-                      // Helper function to get full image URL for display
-                      const getImageUrl = (imagePath: string) => {
-                        if (!imagePath) return '/placeholder.svg';
-                        if (imagePath.startsWith('http')) return imagePath;
-                        if (imagePath.startsWith('/')) {
-                          // If it's already a full path, return it
-                          if (imagePath.startsWith('/properties/')) {
-                            return `http://localhost:5000${imagePath}`;
-                          }
-                          return imagePath;
-                        }
-                        // For relative paths, prepend the backend URL
-                        return `http://localhost:5000${imagePath}`;
-                      };
-                      
                       return (
                         <div key={index} className="relative group">
                           <img

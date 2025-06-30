@@ -6,6 +6,17 @@ interface PropertyScene3DProps {
   images: string[];
 }
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const getImageUrl = (imagePath: string) => {
+  if (!imagePath) return '';
+  if (imagePath.startsWith('http')) return imagePath;
+  if (!imagePath.startsWith('/public/')) {
+    imagePath = imagePath.replace(/^\//, '');
+    imagePath = '/public/' + imagePath;
+  }
+  return `${API_URL}${imagePath}`;
+};
+
 export function PropertyScene3D({ images }: PropertyScene3DProps) {
   return (
     <div className="h-[400px] w-full">
@@ -17,7 +28,7 @@ export function PropertyScene3D({ images }: PropertyScene3DProps) {
         {images.map((image, index) => (
           <PropertyCard3D
             key={index}
-            image={image}
+            image={getImageUrl(image)}
             position={[index * 2.5 - (images.length - 1), 0, 0]}
             rotation={[0, 0, 0]}
           />

@@ -1,5 +1,5 @@
 import { Header } from "@/components/Header";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -143,7 +143,7 @@ const PersonalSecurity = () => {
               <div className="pt-4 border-t space-y-3">
                 <Button variant="destructive" className="w-full text-base font-semibold py-3 shadow" onClick={handleLogoutClick}>
                   <LogOut className="mr-2 h-5 w-5" />
-                  {t('logOut')}
+                  {t('logout')}
                 </Button>
                 <Button variant="outline" className="w-full border-2 border-destructive text-destructive hover:bg-destructive/10 mt-2 flex items-center justify-center gap-2 font-semibold py-3 shadow" onClick={() => setShowDeleteDialog(true)}>
                   <AlertTriangle className="h-5 w-5" />

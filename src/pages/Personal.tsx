@@ -41,6 +41,16 @@ import { toast } from "sonner";
 import { useTheme } from "next-themes";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const getAvatarUrl = (avatarPath: string) => {
+  if (!avatarPath) return '';
+  if (avatarPath.startsWith('http')) return avatarPath;
+  if (!avatarPath.startsWith('/public/')) {
+    avatarPath = '/public' + (avatarPath.startsWith('/') ? '' : '/') + avatarPath;
+  }
+  return `${API_URL}${avatarPath}`;
+};
+
 const Personal = () => {
   const { t } = useTranslation();
   const { user, refreshUserProfile, logout, loading, updateUser } = useAuth();
@@ -244,7 +254,7 @@ const Personal = () => {
               <Card className="w-full bg-card rounded-xl shadow-md p-4 sm:p-6 flex flex-col items-center">
                 <div className="relative mb-2">
                   <Avatar className="w-28 h-28 sm:w-32 sm:h-32 md:w-32 md:h-32 lg:w-40 lg:h-40 border-4 border-background ring-2 ring-primary">
-                    <AvatarImage src={user.avatar} alt={formData?.firstName} />
+                    <AvatarImage src={getAvatarUrl(user.avatar)} alt={formData?.firstName} />
                     <AvatarFallback className="text-3xl md:text-5xl lg:text-6xl">{formData?.firstName?.[0]}{formData?.lastName?.[0]}</AvatarFallback>
                   </Avatar>
                   <label htmlFor="avatar-upload" className="absolute bottom-2 right-2 bg-gradient-to-r from-teal-500 to-blue-500 rounded-full p-2 shadow cursor-pointer hover:from-teal-600 hover:to-blue-600 transition border-2 border-white flex items-center justify-center">

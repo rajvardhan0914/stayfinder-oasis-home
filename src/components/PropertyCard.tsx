@@ -34,6 +34,17 @@ interface PropertyCardProps {
   favoritesVersion?: number;
 }
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const getImageUrl = (imagePath: string) => {
+  if (!imagePath) return '';
+  if (imagePath.startsWith('http')) return imagePath;
+  if (!imagePath.startsWith('/public/')) {
+    imagePath = imagePath.replace(/^\//, '');
+    imagePath = '/public/' + imagePath;
+  }
+  return `${API_URL}${imagePath}`;
+};
+
 const PropertyCard: React.FC<PropertyCardProps> = ({ property, favoritesVersion }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const navigate = useNavigate();
@@ -89,7 +100,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, favoritesVersion 
                 <CarouselItem key={index}>
                   <div className="relative w-full h-full">
                     <img
-                      src={image}
+                      src={getImageUrl(image)}
                       alt={`${property.title} - Image ${index + 1}`}
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                       onError={(e) => {

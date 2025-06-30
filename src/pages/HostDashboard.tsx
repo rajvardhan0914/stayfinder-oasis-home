@@ -93,6 +93,17 @@ const HostDashboard = () => {
   const [isMessagesOpen, setIsMessagesOpen] = useState(false);
   const { convertCurrency } = useSettings();
 
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  const getImageUrl = (imagePath: string) => {
+    if (!imagePath) return '';
+    if (imagePath.startsWith('http')) return imagePath;
+    if (!imagePath.startsWith('/public/')) {
+      imagePath = imagePath.replace(/^\//, '');
+      imagePath = '/public/' + imagePath;
+    }
+    return `${API_URL}${imagePath}`;
+  };
+
   // Redirect if not authenticated
   useEffect(() => {
     console.log('Auth effect running:', { authLoading, user });
@@ -118,21 +129,6 @@ const HostDashboard = () => {
         console.log('Properties fetched:', properties);
         
         // Helper function to get full image URL
-        const getImageUrl = (imagePath: string) => {
-          if (!imagePath) return '/placeholder.svg';
-          if (imagePath.startsWith('http')) return imagePath;
-          if (imagePath.startsWith('/')) {
-            // If it's already a full path, return it
-            if (imagePath.startsWith('/properties/')) {
-              return `http://localhost:5000${imagePath}`;
-            }
-            return imagePath;
-          }
-          // For relative paths, prepend the backend URL
-          return `http://localhost:5000${imagePath}`;
-        };
-        
-        // Ensure image URLs are properly prefixed
         const processedProperties = properties.map((property: any) => ({
           ...property,
           images: property.images?.map((url: string) => getImageUrl(url)) || []
@@ -595,9 +591,7 @@ const HostDashboard = () => {
                             <div className="flex items-start space-x-4">
                               <div className="flex-shrink-0">
                                 <img
-                                  src={booking.property.images && booking.property.images.length > 0 
-                                    ? booking.property.images[0] 
-                                    : '/placeholder.svg'}
+                                  src={getImageUrl(booking.property.images[0])}
                                   alt={booking.property.title}
                                   className="w-20 h-20 rounded-lg object-cover"
                                 />

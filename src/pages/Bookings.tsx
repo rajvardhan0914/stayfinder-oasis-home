@@ -56,6 +56,17 @@ interface Booking {
   };
 }
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const getImageUrl = (imagePath: string) => {
+  if (!imagePath) return '';
+  if (imagePath.startsWith('http')) return imagePath;
+  if (!imagePath.startsWith('/public/')) {
+    imagePath = imagePath.replace(/^\//, '');
+    imagePath = '/public/' + imagePath;
+  }
+  return `${API_URL}${imagePath}`;
+};
+
 const Bookings = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -132,7 +143,7 @@ const Bookings = () => {
                     <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8 w-full md:w-3/4 min-h-24 order-1 md:order-1">
                       <div className="w-full md:w-40 h-24 md:h-28 rounded-xl overflow-hidden flex-shrink-0 bg-gray-100 flex items-center justify-center mx-auto md:mx-0">
                         <img
-                          src={booking.property.images[0]}
+                          src={getImageUrl(booking.property.images[0])}
                           alt={booking.property.title}
                           className="w-full h-full object-cover"
                         />

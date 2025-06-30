@@ -31,6 +31,7 @@ import adminApi from "@/lib/adminApi";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
+import { useTranslation } from "react-i18next";
 
 interface User {
   _id: string;
@@ -98,7 +99,19 @@ interface Stats {
   totalReviews: number;
 }
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const getImageUrl = (imagePath: string) => {
+  if (!imagePath) return '';
+  if (imagePath.startsWith('http')) return imagePath;
+  if (!imagePath.startsWith('/public/')) {
+    imagePath = imagePath.replace(/^\//, '');
+    imagePath = '/public/' + imagePath;
+  }
+  return `${API_URL}${imagePath}`;
+};
+
 export default function AdminDashboard() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState("overview");
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<Stats | null>(null);
@@ -278,42 +291,42 @@ export default function AdminDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t('totalUsers')}</CardTitle>
                   <Users className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{stats?.totalUsers || 0}</div>
-                  <p className="text-xs text-muted-foreground">Registered users</p>
+                  <p className="text-xs text-muted-foreground">{t('registeredUsers')}</p>
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Properties</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t('totalProperties')}</CardTitle>
                   <Home className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{stats?.totalProperties || 0}</div>
-                  <p className="text-xs text-muted-foreground">Listed properties</p>
+                  <p className="text-xs text-muted-foreground">{t('listedProperties')}</p>
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Bookings</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t('totalBookings')}</CardTitle>
                   <Calendar className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{stats?.totalBookings || 0}</div>
-                  <p className="text-xs text-muted-foreground">All bookings</p>
+                  <p className="text-xs text-muted-foreground">{t('allBookings')}</p>
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Reviews</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t('totalReviews')}</CardTitle>
                   <Star className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{stats?.totalReviews || 0}</div>
-                  <p className="text-xs text-muted-foreground">User reviews</p>
+                  <p className="text-xs text-muted-foreground">{t('userReviews')}</p>
                 </CardContent>
               </Card>
             </div>
@@ -322,16 +335,16 @@ export default function AdminDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Card>
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">System Health</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t('systemHealth')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-sm text-muted-foreground">Database</span>
-                      <Badge variant="default" className="text-xs">Connected</Badge>
+                      <span className="text-sm text-muted-foreground">{t('database')}</span>
+                      <Badge variant="default" className="text-xs">{t('connected')}</Badge>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-sm text-muted-foreground">Total Records</span>
+                      <span className="text-sm text-muted-foreground">{t('totalRecords')}</span>
                       <span className="text-sm font-medium">
                         {((stats?.totalUsers || 0) + (stats?.totalProperties || 0) + (stats?.totalBookings || 0) + (stats?.totalReviews || 0)).toLocaleString()}
                       </span>
@@ -342,12 +355,12 @@ export default function AdminDashboard() {
               
               <Card>
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">Recent Growth</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t('recentGrowth')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-sm text-muted-foreground">New Users (24h)</span>
+                      <span className="text-sm text-muted-foreground">{t('newUsers')} (24h)</span>
                       <span className="text-sm font-medium text-green-600">
                         {users.filter(user => {
                           const userDate = new Date(user.createdAt);
@@ -358,7 +371,7 @@ export default function AdminDashboard() {
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-sm text-muted-foreground">New Properties (24h)</span>
+                      <span className="text-sm text-muted-foreground">{t('newProperties')} (24h)</span>
                       <span className="text-sm font-medium text-green-600">
                         {properties.filter(property => {
                           const propertyDate = new Date(property.createdAt);
@@ -374,12 +387,12 @@ export default function AdminDashboard() {
               
               <Card>
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">Booking Activity</CardTitle>
+                  <CardTitle className="text-sm font-medium">{t('bookingActivity')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-sm text-muted-foreground">Recent Bookings</span>
+                      <span className="text-sm text-muted-foreground">{t('recentBookings')}</span>
                       <span className="text-sm font-medium text-blue-600">
                         {bookings.filter(booking => {
                           const bookingDate = new Date(booking.createdAt);
@@ -390,9 +403,9 @@ export default function AdminDashboard() {
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-sm text-muted-foreground">Active Status</span>
+                      <span className="text-sm text-muted-foreground">{t('activeStatus')}</span>
                       <Badge variant="outline" className="text-xs">
-                        {bookings.filter(booking => booking.status === 'confirmed').length} Confirmed
+                        {bookings.filter(booking => booking.status === 'confirmed').length} {t('confirmed')}
                       </Badge>
                     </div>
                   </div>
@@ -402,8 +415,8 @@ export default function AdminDashboard() {
             
             <Card>
               <CardHeader>
-                <CardTitle>Recent Activity</CardTitle>
-                <CardDescription>Latest actions and updates</CardDescription>
+                <CardTitle>{t('recentActivity')}</CardTitle>
+                <CardDescription>{t('latestActionsAndUpdates')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -414,7 +427,7 @@ export default function AdminDashboard() {
                         <Users className="h-4 w-4 text-blue-600" />
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm font-medium">New user registered: {user.firstName} {user.lastName}</p>
+                        <p className="text-sm font-medium">{t('newUserRegistered')}: {user.firstName} {user.lastName}</p>
                         <p className="text-xs text-muted-foreground">
                           {new Date(user.createdAt).toLocaleDateString('en-US', {
                             month: 'short',
@@ -434,7 +447,7 @@ export default function AdminDashboard() {
                         <Home className="h-4 w-4 text-green-600" />
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm font-medium">New property listed: {property.title}</p>
+                        <p className="text-sm font-medium">{t('newPropertyListed')}: {property.title}</p>
                         <p className="text-xs text-muted-foreground">
                           {new Date(property.createdAt).toLocaleDateString('en-US', {
                             month: 'short',
@@ -455,7 +468,7 @@ export default function AdminDashboard() {
                       </div>
                       <div className="flex-1">
                         <p className="text-sm font-medium">
-                          New booking: {booking.user ? `${booking.user.firstName} ${booking.user.lastName}` : 'Unknown User'} → {booking.property ? booking.property.title : 'Unknown Property'}
+                          {t('newBooking')}: {booking.user ? `${booking.user.firstName} ${booking.user.lastName}` : t('unknownUser')} → {booking.property ? booking.property.title : t('unknownProperty')}
                         </p>
                         <p className="text-xs text-muted-foreground">
                           {new Date(booking.createdAt).toLocaleDateString('en-US', {
@@ -473,7 +486,7 @@ export default function AdminDashboard() {
                   {users.length === 0 && properties.length === 0 && bookings.length === 0 && (
                     <div className="text-center py-8">
                       <Activity className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                      <p className="text-sm text-muted-foreground">No recent activity</p>
+                      <p className="text-sm text-muted-foreground">{t('noRecentActivity')}</p>
                     </div>
                   )}
                 </div>
@@ -487,12 +500,12 @@ export default function AdminDashboard() {
           <div className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>User Management</CardTitle>
-                <CardDescription>Manage all registered users</CardDescription>
+                <CardTitle>{t('userManagement')}</CardTitle>
+                <CardDescription>{t('manageAllRegisteredUsers')}</CardDescription>
                 <div className="flex items-center space-x-2">
                   <Search className="h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Search users..."
+                    placeholder={t('searchUsers')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="max-w-sm"
@@ -512,7 +525,7 @@ export default function AdminDashboard() {
                               {user.role}
                             </Badge>
                             {user.isVerified && (
-                              <Badge variant="outline">Verified</Badge>
+                              <Badge variant="outline">{t('verified')}</Badge>
                             )}
                           </div>
                         </div>
@@ -543,12 +556,12 @@ export default function AdminDashboard() {
           <div className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>Property Management</CardTitle>
-                <CardDescription>Manage all property listings</CardDescription>
+                <CardTitle>{t('propertyManagement')}</CardTitle>
+                <CardDescription>{t('manageAllPropertyListings')}</CardDescription>
                 <div className="flex items-center space-x-2">
                   <Search className="h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Search properties..."
+                    placeholder={t('searchProperties')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="max-w-sm"
@@ -568,10 +581,10 @@ export default function AdminDashboard() {
                           </p>
                           <p className="text-sm text-muted-foreground flex items-center">
                             <DollarSign className="h-3 w-3 mr-1" />
-                            ₹{property.price}/night
+                            ₹{property.price}/{t('night')}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            Owner: {property.owner ? `${property.owner.firstName} ${property.owner.lastName}` : '(Deleted Owner)'}
+                            {t('owner')}: {property.owner ? `${property.owner.firstName} ${property.owner.lastName}` : t('deletedOwner')}
                           </p>
                         </div>
                       </div>
@@ -601,12 +614,12 @@ export default function AdminDashboard() {
           <div className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>Booking Management</CardTitle>
-                <CardDescription>Manage all bookings and reservations</CardDescription>
+                <CardTitle>{t('bookingManagement')}</CardTitle>
+                <CardDescription>{t('manageAllBookingsAndReservations')}</CardDescription>
                 <div className="flex items-center space-x-2">
                   <Search className="h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Search bookings..."
+                    placeholder={t('searchBookings')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="max-w-sm"
@@ -620,9 +633,9 @@ export default function AdminDashboard() {
                       <div className="flex items-center space-x-4">
                         <div>
                           <h3 className="font-medium">
-                            {booking.user ? `${booking.user.firstName} ${booking.user.lastName}` : '(Deleted User)'}
+                            {booking.user ? `${booking.user.firstName} ${booking.user.lastName}` : t('deletedUser')}
                           </h3>
-                          <p className="text-sm text-muted-foreground">{booking.property ? booking.property.title : '(Deleted Property)'}</p>
+                          <p className="text-sm text-muted-foreground">{booking.property ? booking.property.title : t('deletedProperty')}</p>
                           <p className="text-sm text-muted-foreground flex items-center">
                             <Calendar className="h-3 w-3 mr-1" />
                             {booking.checkIn ? new Date(booking.checkIn).toLocaleDateString() : '?'} - {booking.checkOut ? new Date(booking.checkOut).toLocaleDateString() : '?'}
@@ -662,12 +675,12 @@ export default function AdminDashboard() {
           <div className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>Review Management</CardTitle>
-                <CardDescription>Manage all user reviews and ratings</CardDescription>
+                <CardTitle>{t('reviewManagement')}</CardTitle>
+                <CardDescription>{t('manageAllUserReviewsAndRatings')}</CardDescription>
                 <div className="flex items-center space-x-2">
                   <Search className="h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Search reviews..."
+                    placeholder={t('searchReviews')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="max-w-sm"
@@ -681,9 +694,9 @@ export default function AdminDashboard() {
                       <div className="flex items-center space-x-4">
                         <div>
                           <h3 className="font-medium">
-                            {review.user ? `${review.user.firstName} ${review.user.lastName}` : '(Deleted User)'}
+                            {review.user ? `${review.user.firstName} ${review.user.lastName}` : t('deletedUser')}
                           </h3>
-                          <p className="text-sm text-muted-foreground">{review.property ? review.property.title : '(Deleted Property)'}</p>
+                          <p className="text-sm text-muted-foreground">{review.property ? review.property.title : t('deletedProperty')}</p>
                           <div className="flex items-center space-x-2 mt-1">
                             <div className="flex items-center">
                               {[...Array(5)].map((_, i) => (
@@ -854,7 +867,7 @@ export default function AdminDashboard() {
                     );
                   })}
                   <Button variant="outline" onClick={handleAdminLogout} className="w-full flex items-center gap-2">
-                    <LogOut className="h-4 w-4" /> Logout
+                    <LogOut className="h-4 w-4" /> {t('logout')}
                   </Button>
                 </nav>
               </DrawerContent>
@@ -882,7 +895,7 @@ export default function AdminDashboard() {
               );
             })}
             <Button variant="outline" onClick={handleAdminLogout} className="w-full flex items-center gap-2">
-              <LogOut className="h-4 w-4" /> Logout
+              <LogOut className="h-4 w-4" /> {t('logout')}
             </Button>
           </nav>
         </aside>
@@ -1005,7 +1018,7 @@ export default function AdminDashboard() {
                               {detailsItem.images.slice(0, 6).map((image: string, index: number) => (
                                 <img 
                                   key={index} 
-                                  src={image.startsWith('http') ? image : `http://localhost:5000${image}`} 
+                                  src={getImageUrl(image)} 
                                   alt={`Property ${index + 1}`}
                                   className="w-full h-20 object-cover rounded-md"
                                 />

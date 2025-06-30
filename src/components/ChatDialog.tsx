@@ -52,6 +52,16 @@ interface ChatDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const getAvatarUrl = (avatarPath: string) => {
+  if (!avatarPath) return '';
+  if (avatarPath.startsWith('http')) return avatarPath;
+  if (!avatarPath.startsWith('/public/')) {
+    avatarPath = '/public' + (avatarPath.startsWith('/') ? '' : '/') + avatarPath;
+  }
+  return `${API_URL}${avatarPath}`;
+};
+
 const ChatDialog = ({ booking, isOpen, onOpenChange }: ChatDialogProps) => {
   const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -225,7 +235,7 @@ const ChatDialog = ({ booking, isOpen, onOpenChange }: ChatDialogProps) => {
                 >
                   <div className={`flex items-start space-x-2 max-w-xs ${isOwnMessage(message) ? 'flex-row-reverse space-x-reverse' : ''}`}>
                     <Avatar className="h-8 w-8 border-2 border-border">
-                      <AvatarImage src={message.sender?.avatar} />
+                      <AvatarImage src={getAvatarUrl(message.sender?.avatar)} />
                       <AvatarFallback className="bg-primary text-primary-foreground text-sm font-medium">
                         {message.sender?.firstName?.[0] || 'U'}
                       </AvatarFallback>
