@@ -5,11 +5,13 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 
-// Ensure the upload directory exists (use backend's own public directory)
-const propertyImagesDir = path.join(__dirname, '../public/properties');
-if (!fs.existsSync(propertyImagesDir)) {
-  fs.mkdirSync(propertyImagesDir, { recursive: true });
-  console.log('Created properties upload directory:', propertyImagesDir);
+const isProd = process.env.NODE_ENV === 'production';
+const uploadDir = isProd ? path.resolve(__dirname, 'properties') : path.resolve(__dirname, '..', 'public', 'properties');
+
+// Ensure the upload directory exists
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+  console.log('Created properties upload directory:', uploadDir);
 }
 
 interface AuthRequest extends Request {
@@ -21,15 +23,11 @@ const router = express.Router();
 // --- MULTER SETUP FOR PROPERTY IMAGES ---
 const propertyStorage = multer.diskStorage({
   destination: function (req, file, cb) {
-    // Ensure directory exists before saving
-    if (!fs.existsSync(propertyImagesDir)) {
-      fs.mkdirSync(propertyImagesDir, { recursive: true });
-    }
-    cb(null, propertyImagesDir);
+    cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    cb(null, 'images-' + uniqueSuffix + path.extname(file.originalname));
   }
 });
 

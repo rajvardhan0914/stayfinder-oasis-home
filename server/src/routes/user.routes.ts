@@ -12,8 +12,18 @@ import path from 'path';
 import { Request, Response } from 'express';
 import { Property } from '../models/Property';
 import { Booking } from '../models/Booking';
+import fs from 'fs';
 
 const router = express.Router();
+
+const isProd = process.env.NODE_ENV === 'production';
+const avatarUploadDir = isProd ? path.resolve(__dirname, 'avatars') : path.resolve(__dirname, '..', 'public', 'avatars');
+
+// Ensure the upload directory exists
+if (!fs.existsSync(avatarUploadDir)) {
+  fs.mkdirSync(avatarUploadDir, { recursive: true });
+  console.log('Created avatars upload directory:', avatarUploadDir);
+}
 
 // Multer setup for avatar uploads
 const storage = multer.diskStorage({
@@ -22,7 +32,7 @@ const storage = multer.diskStorage({
     file: Express.Multer.File,
     cb: (error: Error | null, destination: string) => void
   ) {
-    cb(null, path.join(__dirname, '../../../public/avatars'));
+    cb(null, avatarUploadDir);
   },
   filename: function (
     req: Request,
