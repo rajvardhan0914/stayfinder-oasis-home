@@ -17,7 +17,7 @@ import fs from 'fs';
 const router = express.Router();
 
 const isProd = process.env.NODE_ENV === 'production';
-const avatarUploadDir = isProd ? path.resolve(__dirname, 'avatars') : path.resolve(__dirname, '..', 'public', 'avatars');
+const avatarUploadDir = isProd ? path.resolve(__dirname, '..', 'avatars') : path.resolve(__dirname, '..', 'public', 'avatars');
 
 // Ensure the upload directory exists
 if (!fs.existsSync(avatarUploadDir)) {

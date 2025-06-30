@@ -6,7 +6,7 @@ import path from 'path';
 import fs from 'fs';
 
 const isProd = process.env.NODE_ENV === 'production';
-const uploadDir = isProd ? path.resolve(__dirname, 'properties') : path.resolve(__dirname, '..', 'public', 'properties');
+const uploadDir = isProd ? path.resolve(__dirname, '..', 'properties') : path.resolve(__dirname, '..', 'public', 'properties');
 
 // Ensure the upload directory exists
 if (!fs.existsSync(uploadDir)) {
