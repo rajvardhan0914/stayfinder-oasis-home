@@ -410,9 +410,11 @@ const EditProperty = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {imagePreviews.map((preview, index) => {
                 const isExisting = index < (propertyData.images?.length || 0);
+                // Only call getImageUrl if not already a Cloudinary URL
+                const displayUrl = preview.startsWith('http') ? preview : getImageUrl(preview);
                 return (
                   <div key={preview} className="relative">
-                    <img src={getImageUrl(preview)} alt={`Preview ${index + 1}`} className="w-full h-32 object-cover rounded-md" />
+                    <img src={displayUrl} alt={`Preview ${index + 1}`} className="w-full h-32 object-cover rounded-md" />
                     <Button type="button" variant="destructive" size="icon" className="absolute top-1 right-1 h-6 w-6" onClick={() => removeImage(index, isExisting)}>
                       <X className="h-4 w-4" />
                     </Button>

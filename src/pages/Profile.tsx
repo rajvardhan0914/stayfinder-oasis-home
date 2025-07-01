@@ -1,16 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/lib/auth";
 import { Header } from "@/components/Header";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Mail, Phone } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import api from "@/lib/api";
+import { Camera } from "lucide-react";
 
 const Profile = () => {
-  const { user, updateUser, loading: authLoading } = useAuth();
+  const { user, updateUser, loading: authLoading, logout } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isSaving, setIsSaving] = useState(false);
@@ -25,6 +25,7 @@ const Profile = () => {
     country: "",
     zipCode: "",
   });
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!authLoading) {
@@ -100,23 +101,58 @@ const Profile = () => {
     <div className="min-h-screen bg-background">
       <Header />
       <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 bg-muted/40 p-4 md:gap-8 md:p-10">
-        <div className="mx-auto grid w-full max-w-4xl gap-2">
-          <h1 className="text-3xl font-semibold">Settings</h1>
-        </div>
-        <div className="mx-auto grid w-full max-w-4xl items-start gap-6">
-          <Tabs defaultValue="profile" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="profile">Profile</TabsTrigger>
-              <TabsTrigger value="help">Help Center</TabsTrigger>
-            </TabsList>
-            <TabsContent value="profile">
-              <form onSubmit={handleSubmit}>
+        <div className="mx-auto w-full max-w-4xl">
+          <div className="flex flex-col md:flex-row md:items-start md:gap-32 mb-1">
+            <div className="relative flex-shrink-0 flex flex-col items-center md:mt-12">
+              <div className="relative">
+                <Avatar className="h-40 w-40 mb-1 md:mb-0">
+                  <AvatarImage src={user?.avatar && user.avatar.startsWith('http') ? user.avatar : 'https://res.cloudinary.com/demo/image/upload/v1690000000/default-avatar.png'} alt={user?.firstName} />
+                  <AvatarFallback>{user?.firstName?.[0]}{user?.lastName?.[0]}</AvatarFallback>
+                </Avatar>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  onChange={async (e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      const formData = new FormData();
+                      formData.append('avatar', e.target.files[0]);
+                      try {
+                        const response = await api.post('/users/upload-avatar', formData, {
+                          headers: { 'Content-Type': 'multipart/form-data' }
+                        });
+                        toast({ description: "Profile image updated!", variant: "default" });
+                        updateUser({ ...user, avatar: response.data.avatarUrl });
+                      } catch (error) {
+                        toast({ description: error.response?.data?.message || "Failed to upload avatar.", variant: "destructive" });
+                      }
+                    }
+                  }}
+                />
+                <span
+                  className="absolute bottom-1 right-3 cursor-pointer"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <Button
+                    type="button"
+                    size="icon"
+                    className="h-10 w-10 p-0 rounded-full bg-gradient-to-br from-teal-500 via-blue-500 to-indigo-500 text-white shadow-lg border-2 border-white hover:scale-105 hover:from-teal-600 hover:to-blue-700 transition-transform duration-150"
+                  >
+                    <Camera className="w-4 h-4" />
+                  </Button>
+                </span>
+              </div>
+              <div className="text-lg font-semibold mt-2 text-center w-full">{user?.firstName} {user?.lastName}</div>
+            </div>
+            <div className="flex-1 w-full mt-2 md:-mt-6">
+              <form onSubmit={handleSubmit} className="w-full">
                 <Card>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-xl md:text-2xl">Profile Information</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-3 md:space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
+                  <CardContent className="space-y-2 md:space-y-4">
+                    <div className="grid grid-cols-2 gap-2">
                       <div className="space-y-1 md:space-y-2">
                         <label htmlFor="firstName" className="text-sm md:text-base">First Name</label>
                         <input 
@@ -164,7 +200,7 @@ const Profile = () => {
                         className="h-8 md:h-10 text-sm md:text-base w-full border rounded px-2"
                       />
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
+                    <div className="grid grid-cols-2 gap-2">
                       <div className="space-y-1 md:space-y-2">
                         <label htmlFor="street" className="text-sm md:text-base">Street</label>
                         <input 
@@ -188,7 +224,7 @@ const Profile = () => {
                         />
                       </div>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
+                    <div className="grid grid-cols-2 gap-2">
                       <div className="space-y-1 md:space-y-2">
                         <label htmlFor="state" className="text-sm md:text-base">State</label>
                         <input 
@@ -236,48 +272,8 @@ const Profile = () => {
                   </CardFooter>
                 </Card>
               </form>
-            </TabsContent>
-            <TabsContent value="help">
-              <Card>
-                <CardHeader className="pb-3 sm:pb-4">
-                  <CardTitle>Help Center</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4 sm:space-y-6">
-                  <div className="space-y-3 sm:space-y-4">
-                    <h3 className="text-base sm:text-lg font-semibold">Frequently Asked Questions</h3>
-                    <div className="space-y-3 sm:space-y-4">
-                      {/* FAQ items from original file */}
-                      <div className="border rounded-lg p-3 sm:p-4">
-                        <h4 className="font-medium mb-1 sm:mb-2">How do I book a property?</h4>
-                        <p className="text-muted-foreground text-sm sm:text-base">
-                          To book a property, simply browse our listings, select your desired dates, and click "Book Now".
-                        </p>
-                      </div>
-                      <div className="border rounded-lg p-3 sm:p-4">
-                        <h4 className="font-medium mb-1 sm:mb-2">How can I cancel a booking?</h4>
-                        <p className="text-muted-foreground text-sm sm:text-base">
-                          Visit your Bookings page and select the booking you wish to cancel.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="border-t pt-4 sm:pt-6">
-                    <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Need more help?</h3>
-                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
-                      <Button className="w-full sm:w-auto">
-                        <Mail className="mr-2 h-4 w-4" />
-                        Contact Support
-                      </Button>
-                      <Button variant="outline" className="w-full sm:w-auto">
-                        <Phone className="mr-2 h-4 w-4" />
-                        Call Us
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+            </div>
+          </div>
         </div>
       </main>
     </div>

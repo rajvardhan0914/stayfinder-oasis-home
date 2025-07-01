@@ -8,7 +8,6 @@ import Register from "@/pages/Register";
 import PropertyDetail from "@/pages/PropertyDetail";
 import Bookings from "@/pages/Bookings";
 import Favorites from "@/pages/Favorites";
-import Personal from "@/pages/Personal";
 import Help from "@/pages/Help";
 import PersonalSecurity from "@/pages/PersonalSecurity";
 import { AddProperty } from "@/pages/AddProperty";
@@ -43,18 +42,16 @@ function App() {
           <Route path="/properties/:id" element={<PropertyDetail />} />
           <Route path="/bookings" element={<Bookings />} />
           <Route path="/favorites" element={<Favorites />} />
-          <Route path="/personal" element={<Personal />} />
-          <Route path="/personal/help" element={<Help />} />
-          <Route path="/personal/security" element={<PersonalSecurity />} />
+          <Route path="/help" element={<Help />} />
           <Route path="/host-dashboard" element={<HostDashboard />} />
           <Route path="/test" element={<TestComponent />} />
-          <Route path="/help" element={<Help />} />
           <Route path="/add-property" element={<AddProperty />} />
           <Route path="/properties/:id/edit" element={<EditProperty />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/personal-security" element={<PersonalSecurity />} />
           <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
           <Route path="/admin-login" element={<AdminLogin />} />
           <Route path="*" element={<NotFound />} />

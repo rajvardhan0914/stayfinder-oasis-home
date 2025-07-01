@@ -44,7 +44,11 @@ const faqs: FAQ[] = [
   }
 ];
 
-const Help = () => {
+interface HelpProps {
+  hideHeader?: boolean;
+}
+
+const Help = ({ hideHeader }: HelpProps) => {
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   const [contactForm, setContactForm] = useState({
     name: "",
@@ -95,9 +99,9 @@ const Help = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      {!hideHeader && <Header />}
       <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8">
-        <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">Help & Support</h1>
+        {!hideHeader && <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">Help & Support</h1>}
 
         {/* FAQs Section */}
         <section className="mb-8 sm:mb-12">

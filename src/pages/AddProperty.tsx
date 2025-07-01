@@ -205,7 +205,7 @@ export function AddProperty() {
 
       await api.post('/properties', finalPropertyData);
       toast.success("Property added successfully!");
-      navigate('/personal');
+      navigate('/index');
     } catch (error: any) {
       console.error('Error adding property:', error);
       toast.error(error.response?.data?.message || "Failed to add property. Please try again.");

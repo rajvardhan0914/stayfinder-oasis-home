@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { useAuth } from "@/lib/auth";
@@ -41,6 +41,7 @@ export const Header = () => {
   const [hasProperties, setHasProperties] = useState(false);
   const isMobile = useMobile();
   const { t } = useTranslation();
+  const location = useLocation();
 
   useEffect(() => {
     const checkUserProperties = async () => {
@@ -178,7 +179,7 @@ export const Header = () => {
               {user && (
                 <>
                   <SheetClose asChild>
-                    <Link to="/personal" className="w-full">
+                    <Link to="/profile" className="w-full">
                       <Button variant="ghost" className="w-full justify-start gap-2 h-9 sm:h-10 md:h-11 text-sm sm:text-base hover:border hover:border-border">
                         <UserCircle className="h-4 w-4" /> {t('profile')}
                       </Button>
@@ -200,15 +201,16 @@ export const Header = () => {
                 <>
                   <SheetClose asChild>
                     <Link to="/help" className="w-full">
-                      <Button variant="ghost" className="w-full justify-start gap-2 h-9 sm:h-10 md:h-11 text-sm sm:text-base hover:border hover:border-border">
-                        <HelpCircle className="h-4 w-4" /> {t('helpAndSupport')}
+                    <Button variant="ghost" className="w-full justify-start gap-2 h-9 sm:h-10 md:h-11 text-sm sm:text-base hover:border hover:border-border">
+                        <Lock className="h-4 w-4" /> {t('security')}
                       </Button>
+                     
                     </Link>
                   </SheetClose>
                   <SheetClose asChild>
-                    <Link to="/personal/security" className="w-full">
-                      <Button variant="ghost" className="w-full justify-start gap-2 h-9 sm:h-10 md:h-11 text-sm sm:text-base hover:border hover:border-border">
-                        <Lock className="h-4 w-4" /> {t('security')}
+                    <Link to="/personal-security" className="w-full">
+                    <Button variant="ghost" className="w-full justify-start gap-2 h-9 sm:h-10 md:h-11 text-sm sm:text-base hover:border hover:border-border">
+                        <HelpCircle className="h-4 w-4" /> {t('helpAndSupport')}
                       </Button>
                     </Link>
                   </SheetClose>
@@ -294,24 +296,19 @@ const UserMenu = ({ user, handleLogout }: { user: any; handleLogout: () => void 
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <a href="/profile" className="flex items-center gap-2">
+            <Link to="/profile" className="flex items-center gap-2">
               <User className="h-4 w-4" /> {t('profile')}
-            </a>
+            </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <a href="/bookings" className="flex items-center gap-2">
-              <Calendar className="h-4 w-4" /> {t('bookings')}
-            </a>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <a href="/favorites" className="flex items-center gap-2">
-              <Heart className="h-4 w-4" /> {t('favorites')}
-            </a>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <a href="/personal-security" className="flex items-center gap-2">
+            <Link to="/personal-security" className="flex items-center gap-2">
               <Lock className="h-4 w-4" /> {t('security')}
-            </a>
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link to="/help" className="flex items-center gap-2">
+              <HelpCircle className="h-4 w-4" /> {t('helpAndSupport')}
+            </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
