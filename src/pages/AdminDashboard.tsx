@@ -32,6 +32,7 @@ import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "next-themes";
 
 interface User {
   _id: string;
@@ -108,6 +109,7 @@ const getImageUrl = (imagePath: string) => {
 
 export default function AdminDashboard() {
   const { t } = useTranslation();
+  const { setTheme, resolvedTheme } = useTheme();
   const [activeTab, setActiveTab] = useState("overview");
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<Stats | null>(null);
@@ -120,22 +122,6 @@ export default function AdminDashboard() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [detailsItem, setDetailsItem] = useState<any>(null);
-  const [isDark, setIsDark] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('theme') === 'dark' || document.documentElement.classList.contains('dark');
-    }
-    return false;
-  });
-
-  useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-  }, [isDark]);
 
   const handleAdminLogout = () => {
     localStorage.removeItem("adminToken");
@@ -826,9 +812,13 @@ export default function AdminDashboard() {
           </div>
           {/* Theme Toggle Switch - Desktop Only */}
           <div className="hidden sm:flex items-center gap-2 sm:gap-3">
-            <Sun className={isDark ? 'text-muted-foreground' : 'text-yellow-400'} size={18} />
-            <Switch checked={isDark} onCheckedChange={setIsDark} />
-            <Moon className={isDark ? 'text-blue-400' : 'text-muted-foreground'} size={18} />
+            <Button variant="ghost" size="icon" onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}>
+              <Sun className={resolvedTheme === 'dark' ? 'text-muted-foreground' : 'text-yellow-400'} size={18} />
+            </Button>
+            <Switch checked={resolvedTheme === 'dark'} onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')} />
+            <Button variant="ghost" size="icon" onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}>
+              <Moon className={resolvedTheme === 'dark' ? 'text-blue-400' : 'text-muted-foreground'} size={18} />
+            </Button>
           </div>
           {/* Hamburger for mobile */}
           <div className="lg:hidden">
@@ -842,9 +832,13 @@ export default function AdminDashboard() {
                 {/* Theme Toggle Switch - Mobile Only, inside Drawer */}
                 <div className="w-full flex justify-end items-center mb-2 sm:hidden">
                   <div className="flex items-center gap-2">
-                    <Sun className={isDark ? 'text-muted-foreground' : 'text-yellow-400'} size={18} />
-                    <Switch checked={isDark} onCheckedChange={setIsDark} />
-                    <Moon className={isDark ? 'text-blue-400' : 'text-muted-foreground'} size={18} />
+                    <Button variant="ghost" size="icon" onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}>
+                      <Sun className={resolvedTheme === 'dark' ? 'text-muted-foreground' : 'text-yellow-400'} size={18} />
+                    </Button>
+                    <Switch checked={resolvedTheme === 'dark'} onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')} />
+                    <Button variant="ghost" size="icon" onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}>
+                      <Moon className={resolvedTheme === 'dark' ? 'text-blue-400' : 'text-muted-foreground'} size={18} />
+                    </Button>
                   </div>
                 </div>
                 <nav className="space-y-2">

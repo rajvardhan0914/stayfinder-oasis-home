@@ -4,6 +4,8 @@ import { auth } from '../middleware/auth.middleware';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import cloudinary from '../config/cloudinary';
 
 const isProd = process.env.NODE_ENV === 'production';
 const uploadDir = isProd ? path.resolve(__dirname, '..', 'properties') : path.resolve(__dirname, '..', 'public', 'properties');
@@ -20,38 +22,27 @@ interface AuthRequest extends Request {
 
 const router = express.Router();
 
-// --- MULTER SETUP FOR PROPERTY IMAGES ---
-const propertyStorage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadDir);
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'images-' + uniqueSuffix + path.extname(file.originalname));
-  }
+// --- MULTER SETUP FOR PROPERTY IMAGES (Cloudinary) ---
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'stayfinder/properties',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'avif'],
+  } as any,
 });
+const uploadPropertyImages = multer({ storage });
 
-const uploadPropertyImages = multer({ storage: propertyStorage });
-
-// --- NEW ENDPOINT FOR UPLOADING PROPERTY IMAGES ---
+// --- NEW ENDPOINT FOR UPLOADING PROPERTY IMAGES (Cloudinary) ---
 router.post('/upload-images', auth, uploadPropertyImages.array('images', 10), (req, res) => {
   try {
-    console.log('=== IMAGE UPLOAD START ===');
-    console.log('Files received:', req.files);
-    
     if (!req.files || (req.files as Express.Multer.File[]).length === 0) {
       return res.status(400).json({ message: 'No files uploaded' });
     }
-    
     const files = req.files as Express.Multer.File[];
-    const imageUrls = files.map(file => `/properties/${file.filename}`);
-    
-    console.log('Generated image URLs:', imageUrls);
-    console.log('=== IMAGE UPLOAD END ===');
-    
+    // Cloudinary URLs are in file.path
+    const imageUrls = files.map(file => file.path);
     res.json({ imageUrls });
   } catch (error) {
-    console.error('Image upload error:', error);
     res.status(500).json({ message: 'Error uploading images', error: error instanceof Error ? error.message : 'Unknown error' });
   }
 });

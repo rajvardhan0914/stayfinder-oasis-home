@@ -1,25 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <script>
-      (function() {
-        function getInitialColorMode() {
-          const persistedColorPreference = window.localStorage.getItem('theme');
-          const hasPersistedPreference = typeof persistedColorPreference === 'string';
-          if (hasPersistedPreference) {
-            return persistedColorPreference;
-          }
-          const mql = window.matchMedia('(prefers-color-scheme: dark)');
-          const hasMediaQueryPreference = typeof mql.matches === 'boolean';
-          if (hasMediaQueryPreference) {
-            return mql.matches ? 'dark' : 'light';
-          }
-          return 'light';
-        }
-        const colorMode = getInitialColorMode();
-        document.documentElement.classList.add(colorMode);
-      })()
-    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/png" href="/favicon.png" />

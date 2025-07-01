@@ -13,6 +13,8 @@ import { Request, Response } from 'express';
 import { Property } from '../models/Property';
 import { Booking } from '../models/Booking';
 import fs from 'fs';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import cloudinary from '../config/cloudinary';
 
 const router = express.Router();
 
@@ -26,24 +28,14 @@ if (!fs.existsSync(avatarUploadDir)) {
 }
 
 // Multer setup for avatar uploads
-const storage = multer.diskStorage({
-  destination: function (
-    req: Request,
-    file: Express.Multer.File,
-    cb: (error: Error | null, destination: string) => void
-  ) {
-    cb(null, avatarUploadDir);
-  },
-  filename: function (
-    req: Request,
-    file: Express.Multer.File,
-    cb: (error: Error | null, filename: string) => void
-  ) {
-    const userId = (req as any).user._id;
-    cb(null, userId + path.extname(file.originalname));
-  }
+const avatarStorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'stayfinder/avatars',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'avif'],
+  } as any,
 });
-const upload = multer({ storage });
+const uploadAvatar = multer({ storage: avatarStorage });
 
 // Get current user's profile
 router.get('/profile', auth, async (req: any, res) => {
@@ -185,9 +177,9 @@ router.post('/toggle-2fa', auth, async (req: any, res) => {
 });
 
 // Upload avatar endpoint
-router.post('/upload-avatar', auth, upload.single('avatar'), async (req: any, res) => {
+router.post('/upload-avatar', auth, uploadAvatar.single('avatar'), async (req: any, res) => {
   if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
-  const avatarUrl = `/avatars/${req.file.filename}`;
+  const avatarUrl = req.file.path; // Cloudinary URL
   await User.findByIdAndUpdate(req.user._id, { avatar: avatarUrl });
   res.json({ avatarUrl });
 });

@@ -80,5 +80,13 @@
   "forgotPassword": "Forgot your password?",
   "hostDashboard": "Host Dashboard",
   "help": "Help",
-  "contact": "Contact"
+  "contact": "Contact",
+  "browseByCategory": "Browse by Category",
+  "exploreOurMostPopularPropertyTypes": "Explore our most popular property types",
+  "all": "All",
+  "apartment": "Apartment",
+  "villa": "Villa",
+  "house": "House",
+  "cabin": "Cabin",
+  "viewMore": "View More"
 } 
