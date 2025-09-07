@@ -2,7 +2,7 @@
 
 ## ⚠️ CRITICAL: Admin Credentials Security
 
-Your admin credentials were previously hardcoded in the frontend code, which is a **major security vulnerability**. This has been fixed, but you need to set up secure credentials immediately.
+Your admin credentials were previously hardcoded in the createAdminUser.ts script, which is a **major security vulnerability**. This has been fixed to use environment variables, but you need to set up secure credentials immediately.
 
 ## 🚨 Immediate Actions Required:
 
@@ -16,7 +16,7 @@ MONGODB_URI=mongodb://localhost:27017/stayfinder
 # JWT Configuration
 JWT_SECRET=your-super-secure-jwt-secret-key-change-this-in-production
 
-# Admin Credentials (CHANGE THESE IMMEDIATELY!)
+# Admin Credentials (NEVER commit these to git!)
 ADMIN_EMAIL=your-admin-email@example.com
 ADMIN_PASSWORD=your-secure-admin-password
 
@@ -70,8 +70,6 @@ npm run dev
 
 ## 🚫 What Was Fixed:
 
-- ❌ Hardcoded admin email: `rajvardhan09@gmail.com`
-- ❌ Hardcoded admin password: `Rajvardhan_09140205!$@^`
 - ❌ Client-side credential validation
 - ❌ Insecure token storage
 

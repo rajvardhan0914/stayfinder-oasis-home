@@ -10,8 +10,17 @@ async function createAdminUser() {
     await mongoose.connect(process.env.MONGODB_URI!);
     console.log('Connected to MongoDB');
 
-    const email = 'rajvardhan09@gmail.com';
-    const password = 'Rajvardhan_09140205!$@^';
+    // Get admin credentials from environment variables
+    const email = process.env.ADMIN_EMAIL;
+    const password = process.env.ADMIN_PASSWORD;
+
+    if (!email || !password) {
+      console.error('ADMIN_EMAIL and ADMIN_PASSWORD environment variables are required!');
+      console.log('Please set these in your .env file:');
+      console.log('ADMIN_EMAIL=your-admin-email@example.com');
+      console.log('ADMIN_PASSWORD=your-secure-password');
+      return;
+    }
 
     // Check if admin user already exists
     const existingAdmin = await User.findOne({ email });
@@ -60,4 +69,4 @@ async function createAdminUser() {
   }
 }
 
-createAdminUser(); 
+createAdminUser();

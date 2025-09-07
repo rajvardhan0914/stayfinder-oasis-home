@@ -68,9 +68,9 @@ interface Booking {
 }
 
 const HostDashboard = () => {
-  console.log('HostDashboard component rendering');
+  // HostDashboard component rendering
   const { user, loading: authLoading } = useAuth();
-  console.log('Auth state:', { user, authLoading });
+  // Auth state loaded
   const navigate = useNavigate();
   const [listings, setListings] = useState<any[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -105,9 +105,8 @@ const HostDashboard = () => {
 
   // Redirect if not authenticated
   useEffect(() => {
-    console.log('Auth effect running:', { authLoading, user });
+    // Auth effect running
     if (!authLoading && !user) {
-      console.log('Redirecting to login');
       navigate('/login');
     }
   }, [user, authLoading, navigate]);
@@ -115,17 +114,17 @@ const HostDashboard = () => {
   useEffect(() => {
     const fetchProperties = async () => {
       if (!user) {
-        console.log('No user, skipping property fetch');
+        // No user, skipping property fetch
         return; // Don't fetch if no user
       }
       
-      console.log('Fetching properties for user:', user.id);
+      // Fetching properties for user
       setLoading(true);
       setError(null);
       try {
         const res = await api.get('/users/my-properties');
         const properties = res.data;
-        console.log('Properties fetched:', properties);
+        // Properties fetched
         
         // Helper function to get full image URL
         const processedProperties = properties.map((property: any) => ({
@@ -133,7 +132,7 @@ const HostDashboard = () => {
           images: property.images?.map((url: string) => getImageUrl(url)) || []
         }));
         
-        console.log('Processed properties:', processedProperties);
+        // Processed properties
         setListings(processedProperties);
       } catch (err: any) {
         console.error('Error fetching properties:', err);
@@ -159,15 +158,15 @@ const HostDashboard = () => {
   useEffect(() => {
     const fetchBookings = async () => {
       if (!user) {
-        console.log('No user, skipping booking fetch');
+        // No user, skipping booking fetch
         return;
       }
       
-      console.log('Fetching bookings for user:', user.id);
+      // Fetching bookings for user
       setBookingsLoading(true);
       try {
         const res = await api.get('/bookings/host-bookings');
-        console.log('Bookings fetched:', res.data);
+        // Bookings fetched
         setBookings(res.data || []);
       } catch (err: any) {
         console.error('Error fetching bookings:', err);
@@ -294,14 +293,7 @@ const HostDashboard = () => {
     }
   }, [isMessagesOpen, user]);
 
-  console.log('About to render HostDashboard with state:', {
-    authLoading,
-    user: !!user,
-    loading,
-    error,
-    listingsCount: listings.length,
-    bookingsCount: bookings.length
-  });
+  // About to render HostDashboard with state
 
   return (
     <div className="min-h-screen bg-background">

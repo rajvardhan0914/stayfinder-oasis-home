@@ -75,9 +75,7 @@ const EditProperty = () => {
           getImageUrl(url)
         ) || [];
         
-        console.log('=== FETCHED PROPERTY DATA ===');
-        console.log('Raw data:', data);
-        console.log('Location data:', data.location);
+        // Fetched property data
         
         setPropertyData({
             ...data,
@@ -95,13 +93,7 @@ const EditProperty = () => {
             amenities: data.amenities || []
         });
         
-        console.log('=== MAPPED PROPERTY DATA ===');
-        console.log('Mapped address:', data.location ? {
-          street: data.location.address || '',
-          city: data.location.city || '',
-          state: data.location.state || '',
-          country: data.location.country || '',
-        } : data.address);
+        // Mapped property data
         setAmenitiesInput(Array.isArray(data.amenities) ? data.amenities.join(', ') : '');
         setImagePreviews(processedImages);
       } catch (error) {
@@ -267,10 +259,7 @@ const EditProperty = () => {
         availability: propertyData.availability || []
       };
 
-      console.log('=== SUBMITTING PROPERTY DATA ===');
-      console.log('Final price being sent:', finalPropertyData.price);
-      console.log('PropertyData address:', propertyData.address);
-      console.log('Final address being sent:', finalPropertyData.address);
+      // Submitting property data
 
       await api.put(`/properties/${id}`, finalPropertyData);
       

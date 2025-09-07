@@ -21,17 +21,10 @@ router.post('/login', async (req: Request, res: Response) => {
     const adminEmail = process.env.ADMIN_EMAIL;
     const adminPassword = process.env.ADMIN_PASSWORD;
     
-    console.log('Admin login attempt:', { 
-      providedEmail: email, 
-      adminEmailConfigured: !!adminEmail,
-      adminPasswordConfigured: !!adminPassword 
-    });
+    // Admin login attempt
     
     if (!adminEmail || !adminPassword) {
-      console.log('Admin configuration missing:', { 
-        adminEmail: adminEmail ? 'SET' : 'NOT SET',
-        adminPassword: adminPassword ? 'SET' : 'NOT SET'
-      });
+      // Admin configuration missing
       return res.status(500).json({ 
         message: 'Admin configuration not found. Please set ADMIN_EMAIL and ADMIN_PASSWORD in your .env file.' 
       });
@@ -39,7 +32,7 @@ router.post('/login', async (req: Request, res: Response) => {
     
     // Check if email matches admin email
     if (email !== adminEmail) {
-      console.log('Email mismatch:', { provided: email, expected: adminEmail });
+      // Email mismatch
       return res.status(401).json({ message: 'Invalid admin credentials' });
     }
     
@@ -47,7 +40,7 @@ router.post('/login', async (req: Request, res: Response) => {
     const isPasswordValid = await bcrypt.compare(password, adminPassword) || password === adminPassword;
     
     if (!isPasswordValid) {
-      console.log('Password mismatch for admin email:', email);
+      // Password mismatch
       return res.status(401).json({ message: 'Invalid admin credentials' });
     }
     
@@ -58,7 +51,7 @@ router.post('/login', async (req: Request, res: Response) => {
       { expiresIn: '24h' }
     );
     
-    console.log('Admin login successful for:', email);
+    // Admin login successful
     res.json({ 
       message: 'Admin login successful',
       token,
@@ -92,7 +85,7 @@ const adminAuth = async (req: any, res: Response, next: Function) => {
     }
     
     // Legacy token check (for backward compatibility)
-    const expectedAdminEmail = process.env.ADMIN_EMAIL || 'rajvardhan09@gmail.com';
+    const expectedAdminEmail = process.env.ADMIN_EMAIL;
     if (adminToken !== 'admin-authenticated' || adminEmail !== expectedAdminEmail) {
       return res.status(401).json({ message: 'Admin access required' });
     }

@@ -181,21 +181,15 @@ const PropertyDetail = () => {
         // Filter out any invalid reviews - be more lenient
         propertyData.reviews = propertyData.reviews.filter((review: any) => {
           if (!review) {
-            // console.log('Filtering out null/undefined review');
             return false;
           }
           if (!review._id) {
-            // console.log('Filtering out review without _id:', review);
             return false;
           }
           // Don't require user, rating, or comment to be present
           return true;
         });
         
-        // console.log('Processed property data:', propertyData);
-        // console.log('Reviews count:', propertyData.reviews.length);
-        // console.log('Reviews array type:', Array.isArray(propertyData.reviews) ? 'Array' : typeof propertyData.reviews);
-        // console.log('Reviews data:', JSON.stringify(propertyData.reviews, null, 2));
         setProperty(propertyData);
       } catch (error) {
         // console.error('Error fetching property:', error);
@@ -225,13 +219,9 @@ const PropertyDetail = () => {
           
           // Check if user has already reviewed this property (for all users, not just those who booked)
           try {
-            // console.log('Checking for existing user review...');
             const reviewResponse = await api.get(`/reviews/user/${id}`);
-            // console.log('User review response:', reviewResponse.data);
             setUserReview(reviewResponse.data.review);
           } catch (error: any) {
-            // User hasn't reviewed yet, which is fine
-            // console.log('No existing review found:', error.response?.status);
             setUserReview(null);
           }
         } catch (error) {
@@ -369,7 +359,6 @@ const PropertyDetail = () => {
       return;
     }
 
-    // console.log('Submitting review:', { propertyId: property._id, rating: reviewRating, comment: reviewComment });
     setIsSubmittingReview(true);
     try {
       const reviewData = {
@@ -378,14 +367,10 @@ const PropertyDetail = () => {
         comment: reviewComment.trim()
       };
 
-      // console.log('Sending review submission request...');
       const response = await api.post('/reviews', reviewData);
-      // console.log('Review submission response:', response.data);
       
       toast.success("Review submitted successfully!");
       
-      // Refetch the property to get updated data with populated reviews
-      // console.log('Refetching property data...');
       const propertyResponse = await api.get(`/properties/${property._id}`);
       // console.log('Refetched property data:', propertyResponse.data);
       
@@ -401,8 +386,6 @@ const PropertyDetail = () => {
       setReviewComment("");
       setReviewRating(5);
     } catch (error: any) {
-      // console.error('Error submitting review:', error);
-      // console.error('Error response:', error.response?.data);
       toast.error(error.response?.data?.message || "Failed to submit review");
     } finally {
       setIsSubmittingReview(false);
@@ -411,7 +394,6 @@ const PropertyDetail = () => {
 
   const handleUpdateReview = async () => {
     if (!user || !property || !userReview) {
-      // console.log('Update review check failed:', { user: !!user, property: !!property, userReview: !!userReview });
       toast.error("Unable to update review. Please refresh the page and try again.");
       return;
     }
@@ -421,7 +403,6 @@ const PropertyDetail = () => {
       return;
     }
 
-    // console.log('Updating review:', { reviewId: userReview._id, rating: reviewRating, comment: reviewComment });
     setIsSubmittingReview(true);
     try {
       const reviewData = {
@@ -429,9 +410,7 @@ const PropertyDetail = () => {
         comment: reviewComment.trim()
       };
 
-      // console.log('Sending update request to:', `/reviews/${userReview._id}`);
       const response = await api.put(`/reviews/${userReview._id}`, reviewData);
-      // console.log('Update response:', response.data);
       
       if (!response.data || !response.data._id) {
         throw new Error('Invalid response from server');
@@ -441,9 +420,6 @@ const PropertyDetail = () => {
       
       // Update the user review state first
       setUserReview(response.data);
-      
-      // Refetch the property to get updated data with populated reviews
-      // console.log('Refetching property data...');
       const propertyResponse = await api.get(`/properties/${property._id}`);
       // console.log('Refetched property data:', propertyResponse.data);
       
@@ -455,8 +431,6 @@ const PropertyDetail = () => {
       
       setIsReviewOpen(false);
     } catch (error: any) {
-      // console.error('Error updating review:', error);
-      // console.error('Error response:', error.response?.data);
       
       // Don't show error toast if it's a network error, just log it
       if (error.response?.status) {
@@ -472,25 +446,19 @@ const PropertyDetail = () => {
 
   const handleDeleteReview = async () => {
     if (!user || !property || !userReview) {
-      // console.log('Delete review check failed:', { user: !!user, property: !!property, userReview: !!userReview });
       return;
     }
 
     if (!confirm("Are you sure you want to delete your review?")) return;
 
-    // console.log('Deleting review:', { reviewId: userReview._id });
     setIsSubmittingReview(true);
     try {
-      // console.log('Sending delete request to:', `/reviews/${userReview._id}`);
       await api.delete(`/reviews/${userReview._id}`);
-      // console.log('Review deleted successfully');
       
       toast.success("Review deleted successfully!");
       
       // Refetch the property to get updated data with populated reviews
-      // console.log('Refetching property data after deletion...');
       const propertyResponse = await api.get(`/properties/${property._id}`);
-      // console.log('Refetched property data after deletion:', propertyResponse.data);
       setProperty(propertyResponse.data);
       
       setUserReview(null);
@@ -1256,7 +1224,6 @@ const PropertyDetail = () => {
       </div>
     );
   } catch (error) {
-    // console.error('Error rendering PropertyDetail:', error);
     return (
       <div className="min-h-screen bg-background">
         <Header />

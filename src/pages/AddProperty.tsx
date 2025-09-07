@@ -200,8 +200,7 @@ export function AddProperty() {
         availability: propertyData.availability.filter(period => period.startDate && period.endDate)
       };
 
-      console.log('=== ADDING NEW PROPERTY ===');
-      console.log('Property data being sent:', JSON.stringify(finalPropertyData, null, 2));
+      // Adding new property
 
       await api.post('/properties', finalPropertyData);
       toast.success("Property added successfully!");

@@ -7,8 +7,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Shield, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 
-const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL || "rajvardhan09@gmail.com"; // Admin email
-const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || "Rajvardhan_09140205!$@^"; // Admin password
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("");
@@ -22,16 +20,23 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
-      // Check admin credentials
-      if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-        // Store admin session
-        localStorage.setItem("adminToken", "admin-authenticated");
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem("adminToken", data.token);
         localStorage.setItem("adminEmail", email);
-        
         toast.success("Admin login successful!");
         navigate("/admin");
       } else {
-        toast.error("Invalid admin credentials");
+        toast.error(data.message || "Invalid admin credentials");
       }
     } catch (error) {
       toast.error("Login failed. Please try again.");

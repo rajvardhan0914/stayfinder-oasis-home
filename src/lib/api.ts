@@ -3,12 +3,7 @@ import axios from 'axios';
 // Use full server URL for development
 const SERVER_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
-// Debug log to confirm API configuration
-console.log('API Configuration:', {
-  SERVER_BASE_URL,
-  baseURL: `${SERVER_BASE_URL}/api`,
-  env: import.meta.env.VITE_SERVER_URL
-});
+// API Configuration loaded
 
 const api = axios.create({
   baseURL: `${SERVER_BASE_URL}/api`,

@@ -77,10 +77,24 @@ A full-stack MERN (MongoDB, Express.js, React, Node.js) application for vacation
    
    Create a `.env` file in the `server` directory:
    ```env
+   # Database Configuration
    MONGODB_URI=mongodb://localhost:27017/stayfinder
+   
+   # JWT Configuration
    JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+   
+   # Admin Credentials (NEVER commit these to git!)
+   ADMIN_EMAIL=admin@stayfinder.com
+   ADMIN_PASSWORD=admin123456
+   
+   # Server Configuration
    PORT=5000
    NODE_ENV=development
+   
+   # Cloudinary Configuration (for image uploads)
+   CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+   CLOUDINARY_API_KEY=your_cloudinary_api_key
+   CLOUDINARY_API_SECRET=your_cloudinary_api_secret
    ```
 
 5. **Database Setup**
@@ -100,9 +114,16 @@ A full-stack MERN (MongoDB, Express.js, React, Node.js) application for vacation
    npm run dev
    ```
 
-7. **Access the application**
+7. **Create Admin User**
+   ```bash
+   cd server
+   npm run seed:user
+   ```
+
+8. **Access the application**
    - Frontend: http://localhost:5173
    - Backend API: http://localhost:5000
+   - Admin Login: http://localhost:5173/admin-login
 
 ## 🗄️ Database Schema
 
@@ -223,17 +244,23 @@ Language switching is available in the user preferences, and all text content is
 
 ## 🚀 Deployment
 
-### Frontend Deployment
+### Current Deployment Setup
+- **Backend**: Deployed on Render
+- **Frontend**: Deployed on Vercel
+
+### Frontend Deployment (Vercel)
 ```bash
 npm run build
 ```
 
-### Backend Deployment
+### Backend Deployment (Render)
 ```bash
 cd server
 npm run build
 npm start
 ```
+
+For detailed deployment instructions, see [DEPLOYMENT.md](./DEPLOYMENT.md)
 
 ## 📱 Mobile Responsiveness
 
@@ -247,7 +274,13 @@ The application is fully responsive and optimized for:
 To test the database connection:
 ```bash
 cd server
-node test-db.js
+npm run dev
+```
+
+To create admin user:
+```bash
+cd server
+npm run seed:user
 ```
 
 ## 🤝 Contributing

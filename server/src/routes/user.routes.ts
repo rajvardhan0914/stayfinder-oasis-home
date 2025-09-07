@@ -24,7 +24,7 @@ const avatarUploadDir = isProd ? path.resolve(__dirname, '..', 'avatars') : path
 // Ensure the upload directory exists
 if (!fs.existsSync(avatarUploadDir)) {
   fs.mkdirSync(avatarUploadDir, { recursive: true });
-  console.log('Created avatars upload directory:', avatarUploadDir);
+  // Created avatars upload directory
 }
 
 // Multer setup for avatar uploads

@@ -21,15 +21,6 @@ import Contact from "@/pages/Contact";
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 
-// Simple test component
-const TestComponent = () => (
-  <div className="min-h-screen bg-background p-8 animate-fade-in">
-    <div className="container mx-auto max-w-4xl">
-      <h1 className="text-4xl font-bold text-foreground mb-4">Test Page</h1>
-      <p className="text-muted-foreground text-lg">This is a test page to check if routing works.</p>
-    </div>
-  </div>
-);
 
 function App() {
   return (
@@ -44,7 +35,6 @@ function App() {
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/help" element={<Help />} />
           <Route path="/host-dashboard" element={<HostDashboard />} />
-          <Route path="/test" element={<TestComponent />} />
           <Route path="/add-property" element={<AddProperty />} />
           <Route path="/properties/:id/edit" element={<EditProperty />} />
           <Route path="/profile" element={<Profile />} />

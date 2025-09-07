@@ -25,8 +25,6 @@ const Login = () => {
 
     try {
       if (isHostLogin) {
-        // Admin login through backend API
-        // console.log('Attempting admin login with:', { email, password: '***' });
         
         const response = await fetch(`${API_URL}/api/admin/login`, {
           method: 'POST',
@@ -36,8 +34,7 @@ const Login = () => {
           body: JSON.stringify({ email, password }),
         });
 
-        // console.log('Admin login response status:', response.status);
-        // console.log('Admin login response headers:', response.headers);
+       
 
         if (response.ok) {
           const data = await response.json();

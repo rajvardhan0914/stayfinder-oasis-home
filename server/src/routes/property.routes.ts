@@ -13,7 +13,7 @@ const uploadDir = isProd ? path.resolve(__dirname, '..', 'properties') : path.re
 // Ensure the upload directory exists
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
-  console.log('Created properties upload directory:', uploadDir);
+  // Created properties upload directory
 }
 
 interface AuthRequest extends Request {
@@ -50,7 +50,7 @@ router.post('/upload-images', auth, uploadPropertyImages.array('images', 10), (r
 // Search properties
 router.get('/search', async (req: Request, res: Response) => {
   try {
-    console.log('Search request received with params:', req.query);
+    // Search request received
     
     const { location, checkIn, checkOut, guests } = req.query;
     
@@ -77,13 +77,13 @@ router.get('/search', async (req: Request, res: Response) => {
       };
     }
     
-    console.log('Search query:', JSON.stringify(query, null, 2));
+    // Search query built
     
     const properties = await Property.find(query)
       .populate('owner', 'firstName lastName email avatar')
       .sort({ createdAt: -1 });
       
-    console.log(`Found ${properties.length} properties`);
+    // Properties found
     
     res.json(properties);
   } catch (error) {
@@ -98,12 +98,12 @@ router.get('/search', async (req: Request, res: Response) => {
 // Get all properties
 router.get('/', async (req: Request, res: Response) => {
   try {
-    console.log('=== FETCHING ALL PROPERTIES ===');
+    // Fetching all properties
     const properties = await Property.find()
       .populate('owner', 'firstName lastName email avatar')
       .sort({ createdAt: -1 });
     
-    console.log(`Found ${properties.length} properties in database`);
+    // Properties found in database
     
     // Return the full property objects, not just a small subset
     res.json(properties);
@@ -116,8 +116,7 @@ router.get('/', async (req: Request, res: Response) => {
 // Get single property
 router.get('/:id', async (req: Request, res: Response) => {
   try {
-    console.log('=== FETCHING SINGLE PROPERTY ===');
-    console.log('Property ID:', req.params.id);
+    // Fetching single property
     
     const property = await Property.findById(req.params.id)
       .populate('owner', 'firstName lastName email avatar')
@@ -130,15 +129,12 @@ router.get('/:id', async (req: Request, res: Response) => {
       });
     
     if (!property) {
-      console.log('Property not found');
+      // Property not found
       return res.status(404).json({ message: 'Property not found' });
     }
     
-    console.log('Property found:', property.title);
-    console.log('Reviews count:', property.reviews?.length || 0);
-    console.log('Reviews array type:', Array.isArray(property.reviews) ? 'Array' : typeof property.reviews);
-    console.log('Reviews:', JSON.stringify(property.reviews, null, 2));
-    console.log('Property rating:', property.rating);
+    // Property found with reviews
+    // Property rating calculated
     
     // Filter out any null reviews (invalid references)
     const propertyData = property.toObject();
